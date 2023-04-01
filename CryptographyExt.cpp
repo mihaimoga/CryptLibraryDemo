@@ -34,19 +34,19 @@ CryptLibraryDemo. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*
 void TraceLastError(LPCTSTR lpszLibrary, LPCTSTR lpszOperation, DWORD dwLastError)
 {
 	//Display a message and the last error in the TRACE. 
-	LPVOID lpszErrorBuffer = NULL;
+	LPVOID lpszErrorBuffer = nullptr;
 	CString	strLastError;
 
 	::FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | 
 		FORMAT_MESSAGE_FROM_SYSTEM | 
 		FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
+		nullptr,
 		dwLastError,
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR) &lpszErrorBuffer,
 		0,
-		NULL);
+		nullptr);
 
 	strLastError.Format(_T("[%s] %s: %s\n"), lpszLibrary, lpszOperation, lpszErrorBuffer);
 
@@ -60,7 +60,7 @@ void TraceLastError(LPCTSTR lpszLibrary, LPCTSTR lpszOperation, DWORD dwLastErro
 CString GetComputerID()
 {
 	CString strComputerID;
-	DWORD dwLength = MAX_STR_BUFFER;
+	/*DWORD dwLength = MAX_STR_BUFFER;
 	TCHAR lpszComputer[MAX_STR_BUFFER] = { 0 };
 	if (GetComputerNameEx(ComputerNameDnsFullyQualified, lpszComputer, &dwLength))
 	{
@@ -78,11 +78,49 @@ CString GetComputerID()
 		{
 			strComputerID =  _T("MihaiMoga");
 		}
+	}*/
+
+	DWORD nLength = 0x1000;
+	TCHAR lpszUserName[0x1000] = { 0, };
+	if (GetUserNameEx(NameUserPrincipal, lpszUserName, &nLength))
+	{
+		lpszUserName[nLength] = 0;
+		TRACE(_T("UserName = %s\n"), lpszUserName);
 	}
+	else
+	{
+		nLength = 0x1000;
+		if (GetUserName(lpszUserName, &nLength) != 0)
+		{
+			lpszUserName[nLength] = 0;
+			TRACE(_T("UserName = %s\n"), lpszUserName);
+		}
+	}
+
+	nLength = 0x1000;
+	TCHAR lpszComputerName[0x1000] = { 0, };
+	if (GetComputerNameEx(ComputerNamePhysicalDnsFullyQualified, lpszComputerName, &nLength))
+	{
+		lpszComputerName[nLength] = 0;
+		TRACE(_T("ComputerName = %s\n"), lpszComputerName);
+	}
+	else
+	{
+		nLength = 0x1000;
+		if (GetComputerName(lpszComputerName, &nLength) != 0)
+		{
+			lpszComputerName[nLength] = 0;
+			TRACE(_T("ComputerName = %s\n"), lpszComputerName);
+		}
+	}
+
+	strComputerID = lpszUserName;
+	strComputerID += _T(":");
+	strComputerID += lpszComputerName;
 	return strComputerID;
 }
 
-BOOL ConvertHexaToBinary(CLongBinary * pTargetBinary, CLongBinary * pSourceBinary)
+bool ConvertHexaToBinary(CLongBinary* pTargetBinary, CLongBinary* pSourceBinary)
 {
 	BYTE nDataValue;
 	UINT nDataIndex;
@@ -92,19 +130,19 @@ BOOL ConvertHexaToBinary(CLongBinary * pTargetBinary, CLongBinary * pSourceBinar
 	const CString strHexaDigit = _T("0123456789ABCDEF");
 
 	if (!pTargetBinary || !pSourceBinary)
-		return FALSE;
+		return false;
 
-	pTargetBinary->m_hData = NULL;
+	pTargetBinary->m_hData = nullptr;
 	pTargetBinary->m_dwDataLength = pSourceBinary->m_dwDataLength / 2 / sizeof(TCHAR);
 
 	if (!pSourceBinary->m_dwDataLength)
-		return TRUE;
+		return true;
 
 	pTargetBinary->m_hData = GlobalAlloc(GPTR, pTargetBinary->m_dwDataLength + sizeof(BYTE));
 
 	TCHAR * pSourceArray = (TCHAR *) GlobalLock(pSourceBinary->m_hData);
 	BYTE * pTargetArray = (BYTE *) GlobalLock(pTargetBinary->m_hData);
-	ASSERT((pSourceArray != NULL) && (pTargetArray != NULL));
+	ASSERT((pSourceArray != nullptr) && (pTargetArray != nullptr));
 
 	for (UINT nIndex = 0; nIndex < pTargetBinary->m_dwDataLength; nIndex++)
 	{
@@ -124,13 +162,13 @@ BOOL ConvertHexaToBinary(CLongBinary * pTargetBinary, CLongBinary * pSourceBinar
 	VERIFY(GlobalUnlock(pTargetBinary->m_hData));
 	VERIFY(GlobalUnlock(pSourceBinary->m_hData));
 
-	return TRUE;
+	return true;
 }
 
-BOOL ConvertHexaToBinary(LPBYTE lpszOutputBuffer, DWORD dwOutputLength, LPCTSTR lpszInputBuffer, DWORD dwInputLength)
+bool ConvertHexaToBinary(LPBYTE lpszOutputBuffer, DWORD dwOutputLength, LPCTSTR lpszInputBuffer, DWORD dwInputLength)
 {
-	ASSERT(lpszOutputBuffer != NULL);
-	ASSERT(lpszInputBuffer != NULL);
+	ASSERT(lpszOutputBuffer != nullptr);
+	ASSERT(lpszInputBuffer != nullptr);
 	ASSERT(dwInputLength <= (2 * dwOutputLength));
 
 	BYTE nDataValue;
@@ -155,10 +193,10 @@ BOOL ConvertHexaToBinary(LPBYTE lpszOutputBuffer, DWORD dwOutputLength, LPCTSTR 
 		lpszOutputBuffer[nIndex] = nDataValue;
 	}
 
-	return TRUE;
+	return true;
 }
 
-BOOL ConvertBinaryToHexa(CLongBinary * pTargetBinary, CLongBinary * pSourceBinary)
+bool ConvertBinaryToHexa(CLongBinary* pTargetBinary, CLongBinary* pSourceBinary)
 {
 	BYTE nDataValue;
 	UINT nDataIndex;
@@ -166,19 +204,19 @@ BOOL ConvertBinaryToHexa(CLongBinary * pTargetBinary, CLongBinary * pSourceBinar
 	const CString strHexaDigit = _T("0123456789ABCDEF");
 
 	if (!pTargetBinary || !pSourceBinary)
-		return FALSE;
+		return false;
 
-	pTargetBinary->m_hData = NULL;
+	pTargetBinary->m_hData = nullptr;
 	pTargetBinary->m_dwDataLength = pSourceBinary->m_dwDataLength * 2 * sizeof(TCHAR);
 
 	if (!pSourceBinary->m_dwDataLength)
-		return TRUE;
+		return true;
 
 	pTargetBinary->m_hData = GlobalAlloc(GPTR, pTargetBinary->m_dwDataLength + sizeof(TCHAR));
 
 	BYTE * pSourceArray = (BYTE *) GlobalLock(pSourceBinary->m_hData);
 	TCHAR * pTargetArray = (TCHAR *) GlobalLock(pTargetBinary->m_hData);
-	ASSERT((pSourceArray != NULL) && (pTargetArray != NULL));
+	ASSERT((pSourceArray != nullptr) && (pTargetArray != nullptr));
 
 	for (UINT nIndex = 0; nIndex < pSourceBinary->m_dwDataLength; nIndex++)
 	{
@@ -193,13 +231,13 @@ BOOL ConvertBinaryToHexa(CLongBinary * pTargetBinary, CLongBinary * pSourceBinar
 	VERIFY(GlobalUnlock(pTargetBinary->m_hData));
 	VERIFY(GlobalUnlock(pSourceBinary->m_hData));
 
-	return TRUE;
+	return true;
 }
 
-BOOL ConvertBinaryToHexa(LPTSTR lpszOutputBuffer, DWORD dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength)
+bool ConvertBinaryToHexa(LPTSTR lpszOutputBuffer, DWORD dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength)
 {
-	ASSERT(lpszOutputBuffer != NULL);
-	ASSERT(lpszInputBuffer != NULL);
+	ASSERT(lpszOutputBuffer != nullptr);
+	ASSERT(lpszInputBuffer != nullptr);
 	ASSERT(dwOutputLength >= (2 * dwInputLength));
 
 	BYTE nDataValue;
@@ -219,16 +257,16 @@ BOOL ConvertBinaryToHexa(LPTSTR lpszOutputBuffer, DWORD dwOutputLength, LPBYTE l
 
 	lpszOutputBuffer[2 * dwInputLength] = _T('\0');
 
-	return TRUE;
+	return true;
 }
 
-BOOL GetChecksumBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength)
+bool GetChecksumBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength)
 {
-	BOOL retVal = FALSE;
+	bool retVal = false;
 
-	ASSERT(lpszOutputBuffer != NULL);
+	ASSERT(lpszOutputBuffer != nullptr);
 	ASSERT(dwOutputLength != 0);
-	ASSERT(lpszInputBuffer != NULL);
+	ASSERT(lpszInputBuffer != nullptr);
 	ASSERT(dwInputLength != 0);
 
 	HCRYPTPROV hCryptProv = NULL;
@@ -242,7 +280,7 @@ BOOL GetChecksumBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutp
 			{
 				if (CryptGetHashParam(hCryptHash, HP_HASHVAL, lpszOutputBuffer, &dwOutputLength, 0))
 				{
-					retVal = TRUE;
+					retVal = true;
 				}
 				else
 				{
@@ -269,9 +307,9 @@ BOOL GetChecksumBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutp
 	return retVal;
 }
 
-BOOL GetChecksumString(ALG_ID nAlgorithm, CString& strResult, CString strBuffer)
+bool GetChecksumString(ALG_ID nAlgorithm, CString& strResult, CString strBuffer)
 {
-	BOOL retVal = FALSE;
+	bool retVal = false;
 	const int nChecksumLength = ((CALG_MD5 == nAlgorithm) ? MD5CHECKSUM_LENGTH : SHA1CHECKSUM_LENGTH);
 
 	DWORD dwOutput = nChecksumLength;
@@ -288,34 +326,34 @@ BOOL GetChecksumString(ALG_ID nAlgorithm, CString& strResult, CString strBuffer)
 		if (ConvertBinaryToHexa(lpszString, 2 * nChecksumLength + 1, lpszOutput, dwOutput))
 		{
 			strResult.ReleaseBuffer();
-			retVal = TRUE;
+			retVal = true;
 		}
 	}
 
-	if (lpszInput != NULL)
+	if (lpszInput != nullptr)
 	{
 		delete lpszInput;
-		lpszInput = NULL;
+		lpszInput = nullptr;
 	}
 
-	if (lpszOutput != NULL)
+	if (lpszOutput != nullptr)
 	{
 		delete lpszOutput;
-		lpszOutput = NULL;
+		lpszOutput = nullptr;
 	}
 
 	return retVal;
 }
 
-BOOL GetChecksumFile(ALG_ID nAlgorithm, CString& strResult, CString strPathName)
+bool GetChecksumFile(ALG_ID nAlgorithm, CString& strResult, CString strPathName)
 {
-	BOOL retVal = FALSE;
+	bool retVal = false;
 	const int nChecksumLength = ((CALG_MD5 == nAlgorithm) ? MD5CHECKSUM_LENGTH : SHA1CHECKSUM_LENGTH);
 
 	DWORD dwOutput = nChecksumLength;
 	BYTE* lpszOutput = new BYTE[nChecksumLength];
 
-	BYTE* lpszInput = NULL;
+	BYTE* lpszInput = nullptr;
 	try
 	{
 		CFile pInputFile(strPathName, CFile::modeRead | CFile::typeBinary);
@@ -331,7 +369,7 @@ BOOL GetChecksumFile(ALG_ID nAlgorithm, CString& strResult, CString strPathName)
 					if (ConvertBinaryToHexa(lpszString, 2 * nChecksumLength + 1, lpszOutput, dwOutput))
 					{
 						strResult.ReleaseBuffer();
-						retVal = TRUE;
+						retVal = true;
 					}
 				}
 			}
@@ -344,34 +382,34 @@ BOOL GetChecksumFile(ALG_ID nAlgorithm, CString& strResult, CString strPathName)
 		pFileException->GetErrorMessage(lpszError, MAX_STR_BUFFER);
 		pFileException->Delete();
 		OutputDebugString(lpszError);
-		retVal = FALSE;
+		retVal = false;
 	}
 
-	if (lpszInput != NULL)
+	if (lpszInput != nullptr)
 	{
 		delete lpszInput;
-		lpszInput = NULL;
+		lpszInput = nullptr;
 	}
 
-	if (lpszOutput != NULL)
+	if (lpszOutput != nullptr)
 	{
 		delete lpszOutput;
-		lpszOutput = NULL;
+		lpszOutput = nullptr;
 	}
 
 	return retVal;
 }
 
-BOOL EncryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength, LPBYTE lpszSecretKey, DWORD dwSecretKey)
+bool EncryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength, LPBYTE lpszSecretKey, DWORD dwSecretKey)
 {
-	BOOL retVal = FALSE;
+	bool retVal = false;
 	DWORD dwHowManyBytes = dwInputLength;
 
-	ASSERT(lpszOutputBuffer != NULL);
+	ASSERT(lpszOutputBuffer != nullptr);
 	ASSERT(dwOutputLength != 0);
-	ASSERT(lpszInputBuffer != NULL);
+	ASSERT(lpszInputBuffer != nullptr);
 	ASSERT(dwInputLength != 0);
-	ASSERT(lpszSecretKey != NULL);
+	ASSERT(lpszSecretKey != nullptr);
 	ASSERT(dwSecretKey != 0);
 
 	HCRYPTPROV hCryptProv = NULL;
@@ -388,10 +426,10 @@ BOOL EncryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLe
 			{
 				if (CryptDeriveKey(hCryptProv, nAlgorithm, hCryptHash, CRYPT_EXPORTABLE, &hCryptKey))
 				{
-					if (CryptEncrypt(hCryptKey, NULL, TRUE, 0, lpszOutputBuffer, &dwHowManyBytes, dwOutputLength))
+					if (CryptEncrypt(hCryptKey, NULL, true, 0, lpszOutputBuffer, &dwHowManyBytes, dwOutputLength))
 					{
 						dwOutputLength = dwHowManyBytes;
-						retVal = TRUE;
+						retVal = true;
 					}
 					else
 					{
@@ -424,12 +462,12 @@ BOOL EncryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLe
 	return retVal;
 }
 
-BOOL EncryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName, LPBYTE lpszSecretKey, DWORD dwSecretKey)
+bool EncryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName, LPBYTE lpszSecretKey, DWORD dwSecretKey)
 {
-	BOOL retVal = FALSE;
+	bool retVal = false;
 
-	BYTE* lpszOutput = NULL;
-	BYTE* lpszInput = NULL;
+	BYTE* lpszOutput = nullptr;
+	BYTE* lpszInput = nullptr;
 	try
 	{
 		CFile pInputFile(strInputName, CFile::modeRead | CFile::typeBinary);
@@ -446,7 +484,7 @@ BOOL EncryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName,
 					CFile pOutputFile(strOutputName, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary);
 					pOutputFile.Write(lpszOutput, dwOutput);
 					pOutputFile.Close();
-					retVal = TRUE;
+					retVal = true;
 				}
 			}
 		}
@@ -458,34 +496,34 @@ BOOL EncryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName,
 		pFileException->GetErrorMessage(lpszError, MAX_STR_BUFFER);
 		pFileException->Delete();
 		OutputDebugString(lpszError);
-		retVal = FALSE;
+		retVal = false;
 	}
 
-	if (lpszInput != NULL)
+	if (lpszInput != nullptr)
 	{
 		delete lpszInput;
-		lpszInput = NULL;
+		lpszInput = nullptr;
 	}
 
-	if (lpszOutput != NULL)
+	if (lpszOutput != nullptr)
 	{
 		delete lpszOutput;
-		lpszOutput = NULL;
+		lpszOutput = nullptr;
 	}
 
 	return retVal;
 }
 
-BOOL DecryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength, LPBYTE lpszSecretKey, DWORD dwSecretKey)
+bool DecryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength, LPBYTE lpszSecretKey, DWORD dwSecretKey)
 {
-	BOOL retVal = FALSE;
+	bool retVal = false;
 	DWORD dwHowManyBytes = dwInputLength;
 
-	ASSERT(lpszOutputBuffer != NULL);
+	ASSERT(lpszOutputBuffer != nullptr);
 	ASSERT(dwOutputLength != 0);
-	ASSERT(lpszInputBuffer != NULL);
+	ASSERT(lpszInputBuffer != nullptr);
 	ASSERT(dwInputLength != 0);
-	ASSERT(lpszSecretKey != NULL);
+	ASSERT(lpszSecretKey != nullptr);
 	ASSERT(dwSecretKey != 0);
 
 	HCRYPTPROV hCryptProv = NULL;
@@ -502,10 +540,10 @@ BOOL DecryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLe
 			{
 				if (CryptDeriveKey(hCryptProv, nAlgorithm, hCryptHash, CRYPT_EXPORTABLE, &hCryptKey))
 				{
-					if (CryptDecrypt(hCryptKey, NULL, TRUE, 0, lpszOutputBuffer, &dwHowManyBytes))
+					if (CryptDecrypt(hCryptKey, NULL, true, 0, lpszOutputBuffer, &dwHowManyBytes))
 					{
 						dwOutputLength = dwHowManyBytes;
-						retVal = TRUE;
+						retVal = true;
 					}
 					else
 					{
@@ -538,12 +576,12 @@ BOOL DecryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLe
 	return retVal;
 }
 
-BOOL DecryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName, LPBYTE lpszSecretKey, DWORD dwSecretKey)
+bool DecryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName, LPBYTE lpszSecretKey, DWORD dwSecretKey)
 {
-	BOOL retVal = FALSE;
+	bool retVal = false;
 
-	BYTE* lpszOutput = NULL;
-	BYTE* lpszInput = NULL;
+	BYTE* lpszOutput = nullptr;
+	BYTE* lpszInput = nullptr;
 	try
 	{
 		CFile pInputFile(strInputName, CFile::modeRead | CFile::typeBinary);
@@ -560,7 +598,7 @@ BOOL DecryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName,
 					CFile pOutputFile(strOutputName, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary);
 					pOutputFile.Write(lpszOutput, dwOutput);
 					pOutputFile.Close();
-					retVal = TRUE;
+					retVal = true;
 				}
 			}
 		}
@@ -572,19 +610,19 @@ BOOL DecryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName,
 		pFileException->GetErrorMessage(lpszError, MAX_STR_BUFFER);
 		pFileException->Delete();
 		OutputDebugString(lpszError);
-		retVal = FALSE;
+		retVal = false;
 	}
 
-	if (lpszInput != NULL)
+	if (lpszInput != nullptr)
 	{
 		delete lpszInput;
-		lpszInput = NULL;
+		lpszInput = nullptr;
 	}
 
-	if (lpszOutput != NULL)
+	if (lpszOutput != nullptr)
 	{
 		delete lpszOutput;
-		lpszOutput = NULL;
+		lpszOutput = nullptr;
 	}
 
 	return retVal;

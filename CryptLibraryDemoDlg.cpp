@@ -79,8 +79,8 @@ BOOL CAboutDlg::OnInitDialog()
 
 	if (m_pVersionInfo.Load(AfxGetApp()->m_pszExeName))
 	{
-		CString strName = m_pVersionInfo.GetProductName();
-		CString strVersion = m_pVersionInfo.GetProductVersionAsString();
+		CString strName = m_pVersionInfo.GetProductName().c_str();
+		CString strVersion = m_pVersionInfo.GetProductVersionAsString().c_str();
 		strVersion.Replace(_T(" "), _T(""));
 		strVersion.Replace(_T(","), _T("."));
 		const int nFirst = strVersion.Find(_T('.'));

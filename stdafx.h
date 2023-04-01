@@ -58,4 +58,7 @@ CryptLibraryDemo. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*
 #endif
 #endif
 
-
+#include <string>
+#include <vector>
+#include <sstream>
+#include <iomanip>

@@ -39,6 +39,7 @@
     <None Include="hlp\CryptLibraryDemo.hhc">
       <Filter>HTML Help Files</Filter>
     </None>
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CryptLibraryDemo.h">

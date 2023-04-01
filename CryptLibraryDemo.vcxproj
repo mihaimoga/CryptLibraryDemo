@@ -135,6 +135,7 @@ echo.
     <None Include="hlp\HIDD_ROOT_DIALOG.htm">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="README.md" />
     <None Include="ReadMe.txt" />
     <None Include="res\CryptLibraryDemo.ico" />
     <None Include="res\CryptLibraryDemo.rc2" />
