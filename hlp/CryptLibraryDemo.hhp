@@ -1,0 +1,25 @@
+[OPTIONS]
+Auto Index=Yes
+Compatibility=1.1 or later
+Compiled file=CryptLibraryDemo.chm
+Contents file=CryptLibraryDemo.hhc
+Index file=CryptLibraryDemo.hhk
+Default topic=HIDD_ROOT_DIALOG.HTM
+Display compile progress=No
+Full-text search=Yes
+Language=0x0409 English (United States)
+
+
+[FILES]
+HIDD_ROOT_DIALOG.HTM
+
+[ALIAS]
+HIDD_CRYPTLIBRARYDEMO_DIALOG = HIDD_ROOT_DIALOG.htm
+
+[MAP]
+#include HTMLDefines.h
+
+[TEXT POPUPS]
+HTMLDefines.h
+
+[INFOTYPES]
