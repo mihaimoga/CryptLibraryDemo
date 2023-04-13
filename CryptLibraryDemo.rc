@@ -78,12 +78,12 @@ IDR_MAINFRAME           ICON                    "res\\CryptLibraryDemo.ico"
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 170, 184
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About ..."
+CAPTION "About..."
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
     LTEXT           "Crypt Library Demo, Version 1.0",IDC_VERSION,48,14,115,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2023 Mihai Moga",IDC_STATIC,48,26,115,8
+    LTEXT           "Copyright 2023 Stefan-Mihai MOGA",IDC_STATIC,48,26,115,8
     DEFPUSHBUTTON   "OK",IDCANCEL,100,160,63,17,WS_GROUP
     EDITTEXT        IDC_WARNING,7,40,156,80,ES_MULTILINE | ES_READONLY | ES_WANTRETURN
     RTEXT           "Website:",IDC_STATIC,7,128,41,12
@@ -140,7 +140,7 @@ BEGIN
             VALUE "FileDescription", "Demo application for Crypt Library"
             VALUE "FileVersion", "1, 0, 0, 0"
             VALUE "InternalName", "CryptLibraryDemo.exe"
-            VALUE "LegalCopyright", "Copyright © 2023 Mihai Moga - All rights reserved."
+            VALUE "LegalCopyright", "Copyright 2023 Stefan-Mihai MOGA - All rights reserved."
             VALUE "OriginalFilename", "CryptLibraryDemo.exe"
             VALUE "ProductName", "Crypt Library Demo"
             VALUE "ProductVersion", "1, 0, 0, 0"
