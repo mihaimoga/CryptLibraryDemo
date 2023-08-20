@@ -1,6 +1,13 @@
  
 // Commands (ID_* and IDM_*) 
 #define HIDM_ABOUTBOX                           0x10010
+#define HIDM_TWITTER                            0x1000F
+#define HIDM_LINKEDIN                           0x1000E
+#define HIDM_FACEBOOK                           0x1000D
+#define HIDM_INSTAGRAM                          0x1000C
+#define HIDM_ISSUES                             0x1000B
+#define HIDM_DISCUSSIONS                        0x1000A
+#define HIDM_WIKI                               0x10009
  
 // Prompts (IDP_*) 
  

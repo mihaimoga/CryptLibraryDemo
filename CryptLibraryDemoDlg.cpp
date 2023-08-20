@@ -77,7 +77,16 @@ BOOL CAboutDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	if (m_pVersionInfo.Load(AfxGetApp()->m_pszExeName))
+	TCHAR lpszDrive[_MAX_DRIVE];
+	TCHAR lpszDirectory[_MAX_DIR];
+	TCHAR lpszFilename[_MAX_FNAME];
+	TCHAR lpszExtension[_MAX_EXT];
+	TCHAR lpszFullPath[_MAX_PATH];
+
+	VERIFY(0 == _tsplitpath_s(AfxGetApp()->m_pszHelpFilePath, lpszDrive, _MAX_DRIVE, lpszDirectory, _MAX_DIR, lpszFilename, _MAX_FNAME, lpszExtension, _MAX_EXT));
+	VERIFY(0 == _tmakepath_s(lpszFullPath, _MAX_PATH, lpszDrive, lpszDirectory, lpszFilename, _T(".exe")));
+
+	if (m_pVersionInfo.Load(lpszFullPath))
 	{
 		CString strName = m_pVersionInfo.GetProductName().c_str();
 		CString strVersion = m_pVersionInfo.GetProductVersionAsString().c_str();
@@ -86,13 +95,19 @@ BOOL CAboutDlg::OnInitDialog()
 		const int nFirst = strVersion.Find(_T('.'));
 		const int nSecond = strVersion.Find(_T('.'), nFirst + 1);
 		strVersion.Truncate(nSecond);
-		m_ctrlVersion.SetWindowText(strName + _T(" version ") + strVersion);
+#if _WIN32 || _WIN64
+#if _WIN64
+		m_ctrlVersion.SetWindowText(strName + _T(" version ") + strVersion + _T(" (64-bit)"));
+#else
+		m_ctrlVersion.SetWindowText(strName + _T(" version ") + strVersion + _T(" (32-bit)"));
+#endif
+#endif
 	}
 
 	m_ctrlWarning.SetWindowText(_T("This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>."));
 
-	m_ctrlWebsite.SetHyperLink(_T("http://www.emvs.site/"));
-	m_ctrlEmail.SetHyperLink(_T("mailto:contact@emvs.site"));
+	m_ctrlWebsite.SetHyperLink(_T("https://www.moga.doctor/"));
+	m_ctrlEmail.SetHyperLink(_T("mailto:stefan-mihai@moga.doctor"));
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -164,6 +179,15 @@ BOOL CCryptLibraryDemoDlg::OnInitDialog()
 			pSysMenu->AppendMenu(MF_SEPARATOR);
 			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
 		}
+		pSysMenu->AppendMenu(MF_SEPARATOR);
+		pSysMenu->AppendMenu(MF_STRING, IDM_TWITTER, _T("Twitter"));
+		pSysMenu->AppendMenu(MF_STRING, IDM_LINKEDIN, _T("LinkedIn"));
+		pSysMenu->AppendMenu(MF_STRING, IDM_FACEBOOK, _T("Facebook"));
+		pSysMenu->AppendMenu(MF_STRING, IDM_INSTAGRAM, _T("Instagram"));
+		pSysMenu->AppendMenu(MF_SEPARATOR);
+		pSysMenu->AppendMenu(MF_STRING, IDM_ISSUES, _T("Issues"));
+		pSysMenu->AppendMenu(MF_STRING, IDM_DISCUSSIONS, _T("Discussions"));
+		pSysMenu->AppendMenu(MF_STRING, IDM_WIKI, _T("Wiki"));
 	}
 
 	// Set the icon for this dialog.  The framework does this automatically
@@ -192,7 +216,57 @@ void CCryptLibraryDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 	else
 	{
-		CDialog::OnSysCommand(nID, lParam);
+		if (nID == IDM_TWITTER)
+		{
+			::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://twitter.com/stefanmihaimoga"), nullptr, nullptr, SW_SHOW);
+		}
+		else
+		{
+			if (nID == IDM_LINKEDIN)
+			{
+				::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://www.linkedin.com/in/stefanmihaimoga/"), nullptr, nullptr, SW_SHOW);
+			}
+			else
+			{
+				if (nID == IDM_FACEBOOK)
+				{
+					::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://www.facebook.com/stefanmihaimoga"), nullptr, nullptr, SW_SHOW);
+				}
+				else
+				{
+					if (nID == IDM_INSTAGRAM)
+					{
+						::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://www.instagram.com/stefanmihaimoga/"), nullptr, nullptr, SW_SHOW);
+					}
+					else
+					{
+						if (nID == IDM_ISSUES)
+						{
+							::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://github.com/mihaimoga/CryptLibraryDemo/issues"), nullptr, nullptr, SW_SHOW);
+						}
+						else
+						{
+							if (nID == IDM_DISCUSSIONS)
+							{
+								::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://github.com/mihaimoga/CryptLibraryDemo/discussions"), nullptr, nullptr, SW_SHOW);
+							}
+							else
+							{
+								if (nID == IDM_WIKI)
+								{
+									::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://github.com/mihaimoga/CryptLibraryDemo/wiki"), nullptr, nullptr, SW_SHOW);
+								}
+								else
+								{
+									CDialog::OnSysCommand(nID, lParam);
+								}
+							}
+						}
+					}
+
+				}
+			}
+		}
 	}
 }
 

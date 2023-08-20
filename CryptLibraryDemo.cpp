@@ -76,25 +76,6 @@ BOOL CCryptLibraryDemoApp::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("MihaiMoga"));
 
-	delete AfxGetApp()->m_pszExeName;
-	AfxGetApp()->m_pszExeName = new TCHAR[_MAX_PATH];
-
-	// delete AfxGetApp()->m_pszProfileName;
-	// AfxGetApp()->m_pszProfileName = new TCHAR[_MAX_PATH];
-
-	TCHAR lpszDrive[_MAX_DRIVE];
-	TCHAR lpszDirectory[_MAX_DIR];
-	TCHAR lpszFilename[_MAX_FNAME];
-	TCHAR lpszExtension[_MAX_EXT];
-
-	LPTSTR lpszHelpPath = (LPTSTR) AfxGetApp()->m_pszHelpFilePath;
-	LPTSTR lpszExePath = (LPTSTR) AfxGetApp()->m_pszExeName;
-	// LPTSTR lpszIniPath = (LPTSTR) AfxGetApp()->m_pszProfileName;
-
-	VERIFY(0 == _tsplitpath_s(lpszHelpPath, lpszDrive, _MAX_DRIVE, lpszDirectory, _MAX_DIR, lpszFilename, _MAX_FNAME, lpszExtension, _MAX_EXT));
-	VERIFY(0 == _tmakepath_s(lpszExePath, _MAX_PATH, lpszDrive, lpszDirectory, lpszFilename, _T(".exe")));
-	// VERIFY(0 == _tmakepath_s(lpszIniPath, _MAX_PATH, lpszDrive, lpszDirectory, lpszFilename, _T(".ini")));
-
 	CCryptLibraryDemoDlg dlgCryptLibraryDemo;
 	m_pMainWnd = &dlgCryptLibraryDemo;
 	INT_PTR nResponse = dlgCryptLibraryDemo.DoModal();
