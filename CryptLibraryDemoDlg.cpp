@@ -219,7 +219,7 @@ void CCryptLibraryDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	{
 		if (nID == IDM_TWITTER)
 		{
-			::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://twitter.com/stefanmihaimoga"), nullptr, nullptr, SW_SHOW);
+			::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://x.com/stefanmihaimoga"), nullptr, nullptr, SW_SHOW);
 		}
 		else
 		{
