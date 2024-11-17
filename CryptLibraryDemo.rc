@@ -85,7 +85,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,126,201,50,14
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
     LTEXT           "Crypt Library Demo, Version 1.0",IDC_VERSION,48,14,128,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2024 Stefan-Mihai MOGA",IDC_STATIC,48,26,128,8
+    LTEXT           "Copyright (C) 2025 Stefan-Mihai MOGA",IDC_STATIC,48,26,128,8
     EDITTEXT        IDC_WARNING,7,40,169,121,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | ES_WANTRETURN
     RTEXT           "Website:",IDC_STATIC,7,167,41,12
     LTEXT           "https://www.moga.doctor/",IDC_WEBSITE,57,167,119,12,SS_NOTIFY | SS_CENTERIMAGE
@@ -121,8 +121,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,2,0,0
- PRODUCTVERSION 1,2,0,0
+ FILEVERSION 1,3,0,0
+ PRODUCTVERSION 1,3,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -139,12 +139,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "https://www.moga.doctor/"
             VALUE "FileDescription", "Demo application for Crypt Library"
-            VALUE "FileVersion", "1.2.0.0"
+            VALUE "FileVersion", "1.3.0.0"
             VALUE "InternalName", "CryptLibraryDemo.exe"
-            VALUE "LegalCopyright", "Copyright 2024 Stefan-Mihai MOGA - All rights reserved."
+            VALUE "LegalCopyright", "Copyright 2025 Stefan-Mihai MOGA - All rights reserved."
             VALUE "OriginalFilename", "CryptLibraryDemo.exe"
             VALUE "ProductName", "Crypt Library Demo"
-            VALUE "ProductVersion", "1.2.0.0"
+            VALUE "ProductVersion", "1.3.0.0"
         END
     END
     BLOCK "VarFileInfo"
