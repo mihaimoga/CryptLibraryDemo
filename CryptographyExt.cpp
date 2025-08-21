@@ -49,7 +49,7 @@ void TraceLastError(LPCTSTR lpszLibrary, LPCTSTR lpszOperation, DWORD dwLastErro
 		0,
 		nullptr);
 
-	strLastError.Format(_T("[%s] %s: %s\n"), lpszLibrary, lpszOperation, lpszErrorBuffer);
+	strLastError.Format(_T("[%s] %s: %s\n"), lpszLibrary, lpszOperation, (LPTSTR)lpszErrorBuffer);
 
 	// free alocated buffer by FormatMessage
 	LocalFree(lpszErrorBuffer); 
@@ -81,8 +81,8 @@ CString GetComputerID()
 		}
 	}*/
 
-	DWORD nLength = 0x1000;
-	TCHAR lpszUserName[0x1000] = { 0, };
+	DWORD nLength = 0x100;
+	TCHAR lpszUserName[0x100] = { 0, };
 	if (GetUserNameEx(NameUserPrincipal, lpszUserName, &nLength))
 	{
 		lpszUserName[nLength] = 0;
@@ -90,7 +90,7 @@ CString GetComputerID()
 	}
 	else
 	{
-		nLength = 0x1000;
+		nLength = 0x100;
 		if (GetUserName(lpszUserName, &nLength) != 0)
 		{
 			lpszUserName[nLength] = 0;
@@ -98,8 +98,8 @@ CString GetComputerID()
 		}
 	}
 
-	nLength = 0x1000;
-	TCHAR lpszComputerName[0x1000] = { 0, };
+	nLength = 0x100;
+	TCHAR lpszComputerName[0x100] = { 0, };
 	if (GetComputerNameEx(ComputerNamePhysicalDnsFullyQualified, lpszComputerName, &nLength))
 	{
 		lpszComputerName[nLength] = 0;
@@ -107,7 +107,7 @@ CString GetComputerID()
 	}
 	else
 	{
-		nLength = 0x1000;
+		nLength = 0x100;
 		if (GetComputerName(lpszComputerName, &nLength) != 0)
 		{
 			lpszComputerName[nLength] = 0;
@@ -140,30 +140,35 @@ bool ConvertHexaToBinary(CLongBinary* pTargetBinary, CLongBinary* pSourceBinary)
 		return true;
 
 	pTargetBinary->m_hData = GlobalAlloc(GPTR, pTargetBinary->m_dwDataLength + sizeof(BYTE));
-
-	TCHAR * pSourceArray = (TCHAR *) GlobalLock(pSourceBinary->m_hData);
-	BYTE * pTargetArray = (BYTE *) GlobalLock(pTargetBinary->m_hData);
-	ASSERT((pSourceArray != nullptr) && (pTargetArray != nullptr));
-
-	for (UINT nIndex = 0; nIndex < pTargetBinary->m_dwDataLength; nIndex++)
+	if (pTargetBinary->m_hData != nullptr)
 	{
-		nDataIndex = nIndex << 1; // multiply be two
+		TCHAR* pSourceArray = (TCHAR*)GlobalLock(pSourceBinary->m_hData);
+		BYTE* pTargetArray = (BYTE*)GlobalLock(pTargetBinary->m_hData);
+		if ((pSourceArray != nullptr) && (pTargetArray != nullptr))
+		{
+			for (UINT nIndex = 0; nIndex < pTargetBinary->m_dwDataLength; nIndex++)
+			{
+				nDataIndex = nIndex << 1; // multiply be two
 
-		chUpperNibble = pSourceArray[nDataIndex];
-		ASSERT(strHexaDigit.Find(chUpperNibble) != -1);
-		nDataValue = (BYTE)(strHexaDigit.Find(chUpperNibble) * 0x10);
+				chUpperNibble = pSourceArray[nDataIndex];
+				ASSERT(strHexaDigit.Find(chUpperNibble) != -1);
+				nDataValue = (BYTE)(strHexaDigit.Find(chUpperNibble) * 0x10);
 
-		chLowerNibble = pSourceArray[nDataIndex + 1];
-		ASSERT(strHexaDigit.Find(chLowerNibble) != -1);
-		nDataValue = (BYTE)(nDataValue + strHexaDigit.Find(chLowerNibble));
+				chLowerNibble = pSourceArray[nDataIndex + 1];
+				ASSERT(strHexaDigit.Find(chLowerNibble) != -1);
+				nDataValue = (BYTE)(nDataValue + strHexaDigit.Find(chLowerNibble));
 
-		pTargetArray[nIndex] = nDataValue;
+				pTargetArray[nIndex] = nDataValue;
+			}
+
+			VERIFY(GlobalUnlock(pTargetBinary->m_hData));
+			VERIFY(GlobalUnlock(pSourceBinary->m_hData));
+
+			return true;
+		}
 	}
 
-	VERIFY(GlobalUnlock(pTargetBinary->m_hData));
-	VERIFY(GlobalUnlock(pSourceBinary->m_hData));
-
-	return true;
+	return false;
 }
 
 bool ConvertHexaToBinary(LPBYTE lpszOutputBuffer, DWORD dwOutputLength, LPCTSTR lpszInputBuffer, DWORD dwInputLength)
@@ -214,25 +219,31 @@ bool ConvertBinaryToHexa(CLongBinary* pTargetBinary, CLongBinary* pSourceBinary)
 		return true;
 
 	pTargetBinary->m_hData = GlobalAlloc(GPTR, pTargetBinary->m_dwDataLength + sizeof(TCHAR));
-
-	BYTE * pSourceArray = (BYTE *) GlobalLock(pSourceBinary->m_hData);
-	TCHAR * pTargetArray = (TCHAR *) GlobalLock(pTargetBinary->m_hData);
-	ASSERT((pSourceArray != nullptr) && (pTargetArray != nullptr));
-
-	for (UINT nIndex = 0; nIndex < pSourceBinary->m_dwDataLength; nIndex++)
+	if (pTargetBinary->m_hData != nullptr)
 	{
-		nDataIndex = nIndex << 1;  // multiply be two
-		nDataValue = pSourceArray[nIndex];
+		BYTE* pSourceArray = (BYTE*)GlobalLock(pSourceBinary->m_hData);
+		TCHAR* pTargetArray = (TCHAR*)GlobalLock(pTargetBinary->m_hData);
+		if ((pSourceArray != nullptr) && (pTargetArray != nullptr))
+		{
 
-		pTargetArray[nDataIndex] = strHexaDigit.GetAt((nDataValue & 0xFF) / 0x10);
+			for (UINT nIndex = 0; nIndex < pSourceBinary->m_dwDataLength; nIndex++)
+			{
+				nDataIndex = nIndex << 1;  // multiply be two
+				nDataValue = pSourceArray[nIndex];
 
-		pTargetArray[nDataIndex + 1] = strHexaDigit.GetAt((nDataValue & 0xFF) % 0x10);
+				pTargetArray[nDataIndex] = strHexaDigit.GetAt((nDataValue & 0xFF) / 0x10);
+
+				pTargetArray[nDataIndex + 1] = strHexaDigit.GetAt((nDataValue & 0xFF) % 0x10);
+			}
+
+			VERIFY(GlobalUnlock(pTargetBinary->m_hData));
+			VERIFY(GlobalUnlock(pSourceBinary->m_hData));
+
+			return true;
+		}
 	}
 
-	VERIFY(GlobalUnlock(pTargetBinary->m_hData));
-	VERIFY(GlobalUnlock(pSourceBinary->m_hData));
-
-	return true;
+	return false;
 }
 
 bool ConvertBinaryToHexa(LPTSTR lpszOutputBuffer, DWORD dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength)
@@ -333,13 +344,13 @@ bool GetChecksumString(ALG_ID nAlgorithm, CString& strResult, CString strBuffer)
 
 	if (lpszInput != nullptr)
 	{
-		delete lpszInput;
+		delete []lpszInput;
 		lpszInput = nullptr;
 	}
 
 	if (lpszOutput != nullptr)
 	{
-		delete lpszOutput;
+		delete []lpszOutput;
 		lpszOutput = nullptr;
 	}
 
@@ -388,13 +399,13 @@ bool GetChecksumFile(ALG_ID nAlgorithm, CString& strResult, CString strPathName)
 
 	if (lpszInput != nullptr)
 	{
-		delete lpszInput;
+		delete []lpszInput;
 		lpszInput = nullptr;
 	}
 
 	if (lpszOutput != nullptr)
 	{
-		delete lpszOutput;
+		delete []lpszOutput;
 		lpszOutput = nullptr;
 	}
 
@@ -502,13 +513,13 @@ bool EncryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName,
 
 	if (lpszInput != nullptr)
 	{
-		delete lpszInput;
+		delete []lpszInput;
 		lpszInput = nullptr;
 	}
 
 	if (lpszOutput != nullptr)
 	{
-		delete lpszOutput;
+		delete []lpszOutput;
 		lpszOutput = nullptr;
 	}
 
@@ -616,13 +627,13 @@ bool DecryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName,
 
 	if (lpszInput != nullptr)
 	{
-		delete lpszInput;
+		delete []lpszInput;
 		lpszInput = nullptr;
 	}
 
 	if (lpszOutput != nullptr)
 	{
-		delete lpszOutput;
+		delete []lpszOutput;
 		lpszOutput = nullptr;
 	}
 
