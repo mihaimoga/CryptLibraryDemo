@@ -32,9 +32,15 @@ CryptLibraryDemo. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*
 #define new DEBUG_NEW
 #endif
 
+/**
+ * @brief Outputs the last error from a Windows API call to the debug output.
+ * @param lpszLibrary The name of the library where the error occurred.
+ * @param lpszOperation The operation that failed.
+ * @param dwLastError The error code returned by GetLastError().
+ */
 void TraceLastError(LPCTSTR lpszLibrary, LPCTSTR lpszOperation, DWORD dwLastError)
 {
-	//Display a message and the last error in the TRACE. 
+	// Display a message and the last error in the TRACE. 
 	LPVOID lpszErrorBuffer = nullptr;
 	CString	strLastError;
 
@@ -54,33 +60,18 @@ void TraceLastError(LPCTSTR lpszLibrary, LPCTSTR lpszOperation, DWORD dwLastErro
 	// free alocated buffer by FormatMessage
 	LocalFree(lpszErrorBuffer); 
 
-	//Display the last error.
+	// Display the last error.
 	OutputDebugString(strLastError);
 }
 
+/**
+ * @brief Retrieves a string identifying the current user and computer.
+ * @return A string in the format "UserName:ComputerName".
+ */
 CString GetComputerID()
 {
 	CString strComputerID;
-	/*DWORD dwLength = MAX_STR_BUFFER;
-	TCHAR lpszComputer[MAX_STR_BUFFER] = { 0 };
-	if (GetComputerNameEx(ComputerNameDnsFullyQualified, lpszComputer, &dwLength))
-	{
-		lpszComputer[dwLength] = 0;
-		strComputerID = lpszComputer;
-	}
-	else
-	{
-		if (GetComputerName(lpszComputer, &dwLength))
-		{
-			lpszComputer[dwLength] = 0;
-			strComputerID = lpszComputer;
-		}
-		else
-		{
-			strComputerID =  _T("MihaiMoga");
-		}
-	}*/
-
+	// Attempt to get the user principal name, fallback to regular username and computer name.
 	DWORD nLength = 0x100;
 	TCHAR lpszUserName[0x100] = { 0, };
 	if (GetUserNameEx(NameUserPrincipal, lpszUserName, &nLength))
@@ -121,6 +112,12 @@ CString GetComputerID()
 	return strComputerID;
 }
 
+/**
+ * @brief Converts a hexadecimal string stored in a CLongBinary to binary data.
+ * @param pTargetBinary Output binary data.
+ * @param pSourceBinary Input hexadecimal string data.
+ * @return true if conversion succeeded, false otherwise.
+ */
 bool ConvertHexaToBinary(CLongBinary* pTargetBinary, CLongBinary* pSourceBinary)
 {
 	BYTE nDataValue;
@@ -171,6 +168,14 @@ bool ConvertHexaToBinary(CLongBinary* pTargetBinary, CLongBinary* pSourceBinary)
 	return false;
 }
 
+/**
+ * @brief Converts a hexadecimal string buffer to binary data.
+ * @param lpszOutputBuffer Output binary buffer.
+ * @param dwOutputLength Length of output buffer.
+ * @param lpszInputBuffer Input hexadecimal string buffer.
+ * @param dwInputLength Length of input buffer.
+ * @return true if conversion succeeded, false otherwise.
+ */
 bool ConvertHexaToBinary(LPBYTE lpszOutputBuffer, DWORD dwOutputLength, LPCTSTR lpszInputBuffer, DWORD dwInputLength)
 {
 	ASSERT(lpszOutputBuffer != nullptr);
@@ -202,6 +207,12 @@ bool ConvertHexaToBinary(LPBYTE lpszOutputBuffer, DWORD dwOutputLength, LPCTSTR 
 	return true;
 }
 
+/**
+ * @brief Converts binary data in a CLongBinary to a hexadecimal string.
+ * @param pTargetBinary Output hexadecimal string.
+ * @param pSourceBinary Input binary data.
+ * @return true if conversion succeeded, false otherwise.
+ */
 bool ConvertBinaryToHexa(CLongBinary* pTargetBinary, CLongBinary* pSourceBinary)
 {
 	BYTE nDataValue;
@@ -246,6 +257,14 @@ bool ConvertBinaryToHexa(CLongBinary* pTargetBinary, CLongBinary* pSourceBinary)
 	return false;
 }
 
+/**
+ * @brief Converts binary data to a hexadecimal string buffer.
+ * @param lpszOutputBuffer Output hexadecimal string buffer.
+ * @param dwOutputLength Length of output buffer.
+ * @param lpszInputBuffer Input binary buffer.
+ * @param dwInputLength Length of input buffer.
+ * @return true if conversion succeeded, false otherwise.
+ */
 bool ConvertBinaryToHexa(LPTSTR lpszOutputBuffer, DWORD dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength)
 {
 	ASSERT(lpszOutputBuffer != nullptr);
@@ -272,6 +291,15 @@ bool ConvertBinaryToHexa(LPTSTR lpszOutputBuffer, DWORD dwOutputLength, LPBYTE l
 	return true;
 }
 
+/**
+ * @brief Computes a cryptographic hash (checksum) of a buffer.
+ * @param nAlgorithm Hash algorithm identifier (e.g., CALG_MD5, CALG_SHA1).
+ * @param lpszOutputBuffer Output buffer for the hash.
+ * @param dwOutputLength [in/out] On input, size of output buffer; on output, actual hash size.
+ * @param lpszInputBuffer Input buffer to hash.
+ * @param dwInputLength Length of input buffer.
+ * @return true if hash computation succeeded, false otherwise.
+ */
 bool GetChecksumBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength)
 {
 	bool retVal = false;
@@ -319,6 +347,13 @@ bool GetChecksumBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutp
 	return retVal;
 }
 
+/**
+ * @brief Computes a cryptographic hash (checksum) of a string and returns it as a hexadecimal string.
+ * @param nAlgorithm Hash algorithm identifier (e.g., CALG_MD5, CALG_SHA1).
+ * @param strResult Output string containing the checksum in hexadecimal.
+ * @param strBuffer Input string to hash.
+ * @return true if hash computation succeeded, false otherwise.
+ */
 bool GetChecksumString(ALG_ID nAlgorithm, CString& strResult, CString strBuffer)
 {
 	bool retVal = false;
@@ -357,6 +392,13 @@ bool GetChecksumString(ALG_ID nAlgorithm, CString& strResult, CString strBuffer)
 	return retVal;
 }
 
+/**
+ * @brief Computes a cryptographic hash (checksum) of a file and returns it as a hexadecimal string.
+ * @param nAlgorithm Hash algorithm identifier (e.g., CALG_MD5, CALG_SHA1).
+ * @param strResult Output string containing the checksum in hexadecimal.
+ * @param strPathName Path to the file to hash.
+ * @return true if hash computation succeeded, false otherwise.
+ */
 bool GetChecksumFile(ALG_ID nAlgorithm, CString& strResult, CString strPathName)
 {
 	bool retVal = false;
@@ -412,6 +454,17 @@ bool GetChecksumFile(ALG_ID nAlgorithm, CString& strResult, CString strPathName)
 	return retVal;
 }
 
+/**
+ * @brief Encrypts a buffer using a specified algorithm and secret key.
+ * @param nAlgorithm Encryption algorithm identifier (e.g., CALG_RC4).
+ * @param lpszOutputBuffer Output buffer for encrypted data.
+ * @param dwOutputLength [in/out] On input, size of output buffer; on output, actual encrypted size.
+ * @param lpszInputBuffer Input buffer to encrypt.
+ * @param dwInputLength Length of input buffer.
+ * @param lpszSecretKey Secret key buffer.
+ * @param dwSecretKey Length of secret key.
+ * @return true if encryption succeeded, false otherwise.
+ */
 bool EncryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength, LPBYTE lpszSecretKey, DWORD dwSecretKey)
 {
 	bool retVal = false;
@@ -474,6 +527,15 @@ bool EncryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLe
 	return retVal;
 }
 
+/**
+ * @brief Encrypts a file using a specified algorithm and secret key.
+ * @param nAlgorithm Encryption algorithm identifier (e.g., CALG_RC4).
+ * @param strOutputName Output file path.
+ * @param strInputName Input file path.
+ * @param lpszSecretKey Secret key buffer.
+ * @param dwSecretKey Length of secret key.
+ * @return true if encryption succeeded, false otherwise.
+ */
 bool EncryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName, LPBYTE lpszSecretKey, DWORD dwSecretKey)
 {
 	bool retVal = false;
@@ -526,6 +588,17 @@ bool EncryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName,
 	return retVal;
 }
 
+/**
+ * @brief Decrypts a buffer using a specified algorithm and secret key.
+ * @param nAlgorithm Decryption algorithm identifier (e.g., CALG_RC4).
+ * @param lpszOutputBuffer Output buffer for decrypted data.
+ * @param dwOutputLength [in/out] On input, size of output buffer; on output, actual decrypted size.
+ * @param lpszInputBuffer Input buffer to decrypt.
+ * @param dwInputLength Length of input buffer.
+ * @param lpszSecretKey Secret key buffer.
+ * @param dwSecretKey Length of secret key.
+ * @return true if decryption succeeded, false otherwise.
+ */
 bool DecryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength, LPBYTE lpszSecretKey, DWORD dwSecretKey)
 {
 	bool retVal = false;
@@ -588,6 +661,15 @@ bool DecryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD& dwOutputLe
 	return retVal;
 }
 
+/**
+ * @brief Decrypts a file using a specified algorithm and secret key.
+ * @param nAlgorithm Decryption algorithm identifier (e.g., CALG_RC4).
+ * @param strOutputName Output file path.
+ * @param strInputName Input file path.
+ * @param lpszSecretKey Secret key buffer.
+ * @param dwSecretKey Length of secret key.
+ * @return true if decryption succeeded, false otherwise.
+ */
 bool DecryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName, LPBYTE lpszSecretKey, DWORD dwSecretKey)
 {
 	bool retVal = false;
