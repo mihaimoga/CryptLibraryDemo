@@ -40,6 +40,8 @@
       <Filter>HTML Help Files</Filter>
     </None>
     <None Include="README.md" />
+    <None Include="ReleaseNotes.html" />
+    <None Include="SoftwareContentRegister.html" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CryptLibraryDemo.h">

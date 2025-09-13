@@ -260,8 +260,10 @@ echo.
     </None>
     <None Include="README.md" />
     <None Include="ReadMe.txt" />
+    <None Include="ReleaseNotes.html" />
     <None Include="res\CryptLibraryDemo.ico" />
     <None Include="res\CryptLibraryDemo.rc2" />
+    <None Include="SoftwareContentRegister.html" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CryptLibraryDemo.h" />
