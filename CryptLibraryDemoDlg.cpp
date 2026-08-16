@@ -31,6 +31,12 @@ CryptLibraryDemo. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*
 // CAboutDlg dialog used for App About
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief Internal dialog class that displays the application's About box.
+ *
+ * Shows the product name, version string, licence text, and hyperlinks
+ * to the author's website and e-mail address.
+ */
 class CAboutDlg : public CDialog
 {
 public:
@@ -57,10 +63,17 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
+/**
+ * @brief Constructs the CAboutDlg dialog.
+ */
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 {
 }
 
+/**
+ * @brief Performs dialog data exchange for the About box controls.
+ * @param pDX Pointer to the CDataExchange object used for DDX/DDV.
+ */
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -74,6 +87,17 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
+/**
+ * @brief Retrieves the full path of the currently executing module.
+ *
+ * Calls ::GetModuleFileName() with a dynamically growing buffer until the
+ * path fits, then returns it as a CString.
+ *
+ * @param pdwLastError Optional output parameter that receives the last Win32
+ *                     error code. Set to ERROR_SUCCESS on success.
+ * @return The full file-system path of the executable, or an empty CString
+ *         if the call fails.
+ */
 CString GetModuleFileName(_Inout_opt_ DWORD* pdwLastError = nullptr)
 {
 	CString strModuleFileName;
@@ -104,6 +128,10 @@ CString GetModuleFileName(_Inout_opt_ DWORD* pdwLastError = nullptr)
 	}
 }
 
+/**
+ * @brief Initialises the About dialog: populates version, licence, and link controls.
+ * @return TRUE to let the framework set input focus to the first control.
+ */
 BOOL CAboutDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
@@ -142,6 +170,9 @@ BOOL CAboutDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
+/**
+ * @brief Handles WM_DESTROY for the About dialog; delegates to the base class.
+ */
 void CAboutDlg::OnDestroy()
 {
 	CDialog::OnDestroy();
@@ -151,12 +182,20 @@ void CAboutDlg::OnDestroy()
 // CCryptLibraryDemoDlg dialog
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief Constructs the main application dialog and loads the application icon.
+ * @param pParent Optional pointer to the parent window. Defaults to NULL.
+ */
 CCryptLibraryDemoDlg::CCryptLibraryDemoDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CCryptLibraryDemoDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
+/**
+ * @brief Binds dialog controls to their corresponding member variables via DDX/DDV.
+ * @param pDX Pointer to the CDataExchange object used for DDX/DDV.
+ */
 void CCryptLibraryDemoDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -186,6 +225,11 @@ END_MESSAGE_MAP()
 // CCryptLibraryDemoDlg message handlers
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief Initialises the main dialog: sets up the system menu, icons, and
+ *        disables buttons that require a file selection before use.
+ * @return TRUE to let the framework set input focus to the first control.
+ */
 BOOL CCryptLibraryDemoDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
@@ -236,6 +280,16 @@ BOOL CCryptLibraryDemoDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
+/**
+ * @brief Handles WM_SYSCOMMAND messages.
+ *
+ * Intercepts the About box command and social-media / repository link commands
+ * added to the system menu in OnInitDialog(). All other commands are forwarded
+ * to the base class.
+ *
+ * @param nID    The system command identifier.
+ * @param lParam Additional message-specific data.
+ */
 void CCryptLibraryDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
@@ -299,10 +353,13 @@ void CCryptLibraryDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// If you add a minimize button to your dialog, you will need the code below
-//  to draw the icon.  For MFC applications using the document/view model,
-//  this is automatically done for you by the framework.
-
+/**
+ * @brief Handles WM_PAINT.
+ *
+ * When the window is iconic, manually centres and draws the application icon
+ * inside the client rectangle. For normal window states the base-class
+ * implementation is called.
+ */
 void CCryptLibraryDemoDlg::OnPaint()
 {
 	if (IsIconic())
@@ -328,13 +385,21 @@ void CCryptLibraryDemoDlg::OnPaint()
 	}
 }
 
-// The system calls this function to obtain the cursor to display while the user drags
-//  the minimized window.
+/**
+ * @brief Returns the cursor to display while the user drags the minimized window.
+ * @return The application icon handle cast to an HCURSOR.
+ */
 HCURSOR CCryptLibraryDemoDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+/**
+ * @brief Handles the "Select" button click.
+ *
+ * Opens a file-open dialog so the user can choose a file whose MD5 checksum
+ * will be computed. Enables the Compute button when a valid path is selected.
+ */
 void CCryptLibraryDemoDlg::OnBnClickedSelect()
 {
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_LONGNAMES;
@@ -348,6 +413,12 @@ void CCryptLibraryDemoDlg::OnBnClickedSelect()
 	}
 }
 
+/**
+ * @brief Handles the "Compute" button click.
+ *
+ * Calculates the MD5 checksum of the previously selected file using
+ * GetChecksumFile() and displays the result in the checksum edit control.
+ */
 void CCryptLibraryDemoDlg::OnBnClickedCompute()
 {
 	CString strResult;
@@ -361,6 +432,13 @@ void CCryptLibraryDemoDlg::OnBnClickedCompute()
 	}
 }
 
+/**
+ * @brief Handles the "Input File" button click.
+ *
+ * Opens a file-open dialog so the user can specify the source file for
+ * encryption or decryption. Enables Encrypt/Decrypt buttons when both
+ * input and output paths are set.
+ */
 void CCryptLibraryDemoDlg::OnBnClickedInputfile()
 {
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_LONGNAMES;
@@ -375,6 +453,13 @@ void CCryptLibraryDemoDlg::OnBnClickedInputfile()
 	}
 }
 
+/**
+ * @brief Handles the "Output File" button click.
+ *
+ * Opens a file-save dialog so the user can specify the destination file for
+ * encryption or decryption. Enables Encrypt/Decrypt buttons when both
+ * input and output paths are set.
+ */
 void CCryptLibraryDemoDlg::OnBnClickedOutputfile()
 {
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_HIDEREADONLY | OFN_LONGNAMES;
@@ -389,6 +474,13 @@ void CCryptLibraryDemoDlg::OnBnClickedOutputfile()
 	}
 }
 
+/**
+ * @brief Handles the "Encrypt" button click.
+ *
+ * Retrieves the machine-specific secret key via GetComputerID() and uses
+ * EncryptFile() with the RC4 algorithm to encrypt the input file,
+ * writing the result to the output file.
+ */
 void CCryptLibraryDemoDlg::OnBnClickedEncrypt()
 {
 	CString strSecretKey = GetComputerID();
@@ -403,6 +495,13 @@ void CCryptLibraryDemoDlg::OnBnClickedEncrypt()
 	}
 }
 
+/**
+ * @brief Handles the "Decrypt" button click.
+ *
+ * Retrieves the machine-specific secret key via GetComputerID() and uses
+ * EncryptFile() with the RC4 algorithm to decrypt the input file,
+ * writing the result to the output file.
+ */
 void CCryptLibraryDemoDlg::OnBnClickedDecrypt()
 {
 	CString strSecretKey = GetComputerID();
