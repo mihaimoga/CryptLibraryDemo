@@ -101,13 +101,15 @@ END_MESSAGE_MAP()
 CString GetModuleFileName(_Inout_opt_ DWORD* pdwLastError = nullptr)
 {
 	CString strModuleFileName;
-	DWORD dwSize{ _MAX_PATH };
+	DWORD dwSize{ _MAX_PATH };   // start with MAX_PATH and double on overflow
 	while (true)
 	{
+		// Allocate a raw buffer of the current candidate size
 		TCHAR* pszModuleFileName{ strModuleFileName.GetBuffer(dwSize) };
 		const DWORD dwResult{ ::GetModuleFileName(nullptr, pszModuleFileName, dwSize) };
 		if (dwResult == 0)
 		{
+			// API failed entirely – capture the error code and return empty
 			if (pdwLastError != nullptr)
 				*pdwLastError = GetLastError();
 			strModuleFileName.ReleaseBuffer(0);
@@ -115,6 +117,7 @@ CString GetModuleFileName(_Inout_opt_ DWORD* pdwLastError = nullptr)
 		}
 		else if (dwResult < dwSize)
 		{
+			// Path fits within the buffer – commit the exact character count
 			if (pdwLastError != nullptr)
 				*pdwLastError = ERROR_SUCCESS;
 			strModuleFileName.ReleaseBuffer(dwResult);
@@ -122,6 +125,7 @@ CString GetModuleFileName(_Inout_opt_ DWORD* pdwLastError = nullptr)
 		}
 		else if (dwResult == dwSize)
 		{
+			// Buffer was too small – discard contents and try again with double the size
 			strModuleFileName.ReleaseBuffer(0);
 			dwSize *= 2;
 		}
@@ -136,6 +140,7 @@ BOOL CAboutDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+	// Obtain the full path of the running executable to read its VERSIONINFO resource
 	CString strFullPath{ GetModuleFileName() };
 	if (strFullPath.IsEmpty())
 #pragma warning(suppress: 26487)
@@ -145,11 +150,14 @@ BOOL CAboutDlg::OnInitDialog()
 	{
 		CString strName = m_pVersionInfo.GetProductName().c_str();
 		CString strVersion = m_pVersionInfo.GetProductVersionAsString().c_str();
+		// Normalise the raw version string: remove spaces and replace commas with dots
 		strVersion.Replace(_T(" "), _T(""));
 		strVersion.Replace(_T(","), _T("."));
-		const int nFirst = strVersion.Find(_T('.'));
-		const int nSecond = strVersion.Find(_T('.'), nFirst + 1);
+		// Keep only the first two version components (Major.Minor)
+		const int nFirst = strVersion.Find(_T('.'));               // position of first dot
+		const int nSecond = strVersion.Find(_T('.'), nFirst + 1);  // position of second dot
 		strVersion.Truncate(nSecond);
+		// Pad a single-digit minor version with a leading zero (e.g. "1.9" -> "1.09")
 		if (nSecond == (nFirst + 2))
 			strVersion.Insert(nFirst + 1, _T("0"));
 #if _WIN32 || _WIN64
@@ -268,14 +276,16 @@ BOOL CCryptLibraryDemoDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
+	// Log the initial dialog dimensions for debugging layout issues
 	CRect rectCryptLibraryDemo;
 	GetClientRect(&rectCryptLibraryDemo);
 	TRACE(_T("[CCryptLibraryDemoDlg] Width = %d, Height = %d\n"),
 		rectCryptLibraryDemo.Width(), rectCryptLibraryDemo.Height());
 
-	m_btnCompute.EnableWindow(FALSE);
-	m_btnEncrypt.EnableWindow(FALSE);
-	m_btnDecrypt.EnableWindow(FALSE);
+	// Disable action buttons until the user selects the required files
+	m_btnCompute.EnableWindow(FALSE);  // requires a file for checksum
+	m_btnEncrypt.EnableWindow(FALSE);  // requires both input and output files
+	m_btnDecrypt.EnableWindow(FALSE);  // requires both input and output files
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -292,13 +302,16 @@ BOOL CCryptLibraryDemoDlg::OnInitDialog()
  */
 void CCryptLibraryDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
+	// Mask the lower four bits as required by the Windows SDK documentation
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
 	{
+		// Show the About dialog modally
 		CAboutDlg dlgAbout;
 		dlgAbout.DoModal();
 	}
 	else
 	{
+		// Dispatch social-media / repository link commands added to the system menu
 		if (nID == IDM_TWITTER)
 		{
 			::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://x.com/stefanmihaimoga"), nullptr, nullptr, SW_SHOW);
@@ -341,6 +354,7 @@ void CCryptLibraryDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 								}
 								else
 								{
+									// Unknown command – let the framework handle it (e.g. SC_MINIMIZE)
 									CDialog::OnSysCommand(nID, lParam);
 								}
 							}
@@ -366,15 +380,16 @@ void CCryptLibraryDemoDlg::OnPaint()
 	{
 		CPaintDC dc(this); // device context for painting
 
+		// Erase the icon background before drawing
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
 		// Center icon in client rectangle
-		int cxIcon = GetSystemMetrics(SM_CXICON);
-		int cyIcon = GetSystemMetrics(SM_CYICON);
+		int cxIcon = GetSystemMetrics(SM_CXICON);  // standard icon width in pixels
+		int cyIcon = GetSystemMetrics(SM_CYICON);  // standard icon height in pixels
 		CRect rect;
 		GetClientRect(&rect);
-		int x = (rect.Width() - cxIcon + 1) / 2;
-		int y = (rect.Height() - cyIcon + 1) / 2;
+		int x = (rect.Width() - cxIcon + 1) / 2;  // horizontal centre offset
+		int y = (rect.Height() - cyIcon + 1) / 2; // vertical centre offset
 
 		// Draw the icon
 		dc.DrawIcon(x, y, m_hIcon);
@@ -402,13 +417,16 @@ HCURSOR CCryptLibraryDemoDlg::OnQueryDragIcon()
  */
 void CCryptLibraryDemoDlg::OnBnClickedSelect()
 {
+	// OFN_FILEMUSTEXIST ensures the user cannot type a non-existent path
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_LONGNAMES;
 	LPCTSTR lpszFilter = _T("All files (*.*)|*.*\0");
 	CFileDialog pFileDialog(TRUE, NULL, NULL, dwFlags, lpszFilter, this);
 	if (pFileDialog.DoModal() == IDOK)
 	{
+		// Store the selected path and reflect it in the edit control
 		m_strFilename = pFileDialog.GetPathName();
 		m_editFilename.SetWindowText(m_strFilename);
+		// Enable the Compute button only when a valid path has been captured
 		m_btnCompute.EnableWindow(!m_strFilename.IsEmpty());
 	}
 }
@@ -424,8 +442,10 @@ void CCryptLibraryDemoDlg::OnBnClickedCompute()
 	CString strResult;
 	if (!m_strFilename.IsEmpty())
 	{
+		// Compute the MD5 digest of the selected file via the CryptoAPI wrapper
 		if (GetChecksumFile(CALG_MD5, strResult, m_strFilename))
 		{
+			// Display the hex-encoded checksum string in the read-only edit control
 			m_editChecksum.SetWindowText(strResult);
 			MessageBox(_T("MD5 checksum of selected file is ready!"), _T("Crypt Library Demo"), MB_OK);
 		}
@@ -441,13 +461,16 @@ void CCryptLibraryDemoDlg::OnBnClickedCompute()
  */
 void CCryptLibraryDemoDlg::OnBnClickedInputfile()
 {
+	// Open an existing file as the encryption/decryption source
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_LONGNAMES;
 	LPCTSTR lpszFilter = _T("All files (*.*)|*.*\0");
 	CFileDialog pFileDialog(TRUE, NULL, NULL, dwFlags, lpszFilter, this);
 	if (pFileDialog.DoModal() == IDOK)
 	{
+		// Store the source path and update the corresponding edit control
 		m_strInputName = pFileDialog.GetPathName();
 		m_editInputName.SetWindowText(m_strInputName);
+		// Both input and output paths must be set before encryption/decryption is allowed
 		m_btnEncrypt.EnableWindow(!m_strInputName.IsEmpty() && !m_strOutputName.IsEmpty());
 		m_btnDecrypt.EnableWindow(!m_strInputName.IsEmpty() && !m_strOutputName.IsEmpty());
 	}
@@ -462,13 +485,17 @@ void CCryptLibraryDemoDlg::OnBnClickedInputfile()
  */
 void CCryptLibraryDemoDlg::OnBnClickedOutputfile()
 {
+	// Save dialog (FALSE) – the output file does not need to exist yet;
+	// OFN_HIDEREADONLY removes the read-only checkbox from the dialog
 	DWORD dwFlags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_HIDEREADONLY | OFN_LONGNAMES;
 	LPCTSTR lpszFilter = _T("All files (*.*)|*.*\0");
 	CFileDialog pFileDialog(FALSE, NULL, NULL, dwFlags, lpszFilter, this);
 	if (pFileDialog.DoModal() == IDOK)
 	{
+		// Store the destination path and update the corresponding edit control
 		m_strOutputName = pFileDialog.GetPathName();
 		m_editOutputName.SetWindowText(m_strOutputName);
+		// Both input and output paths must be set before encryption/decryption is allowed
 		m_btnEncrypt.EnableWindow(!m_strInputName.IsEmpty() && !m_strOutputName.IsEmpty());
 		m_btnDecrypt.EnableWindow(!m_strInputName.IsEmpty() && !m_strOutputName.IsEmpty());
 	}
@@ -483,11 +510,13 @@ void CCryptLibraryDemoDlg::OnBnClickedOutputfile()
  */
 void CCryptLibraryDemoDlg::OnBnClickedEncrypt()
 {
+	// Derive a machine-specific secret key from the computer's unique identifier
 	CString strSecretKey = GetComputerID();
-	LPBYTE lpszSecretKey = (LPBYTE)(LPCTSTR)strSecretKey;
-	DWORD dwSecretKey = (strSecretKey.GetLength() + 1) * sizeof(TCHAR);
+	LPBYTE lpszSecretKey = (LPBYTE)(LPCTSTR)strSecretKey;  // raw byte pointer into the key string
+	DWORD dwSecretKey = (strSecretKey.GetLength() + 1) * sizeof(TCHAR);  // key length in bytes, including null terminator
 	if (!m_strInputName.IsEmpty() && !m_strOutputName.IsEmpty())
 	{
+		// Encrypt the input file with RC4 and write the ciphertext to the output file
 		if (EncryptFile(CALG_RC4, m_strOutputName, m_strInputName, lpszSecretKey, dwSecretKey))
 		{
 			MessageBox(_T("The file have been successfully encrypted!"), _T("Crypt Library Demo"), MB_OK);
@@ -504,11 +533,13 @@ void CCryptLibraryDemoDlg::OnBnClickedEncrypt()
  */
 void CCryptLibraryDemoDlg::OnBnClickedDecrypt()
 {
+	// Use the same machine-specific key that was used during encryption
 	CString strSecretKey = GetComputerID();
-	LPBYTE lpszSecretKey = (LPBYTE)(LPCTSTR)strSecretKey;
-	DWORD dwSecretKey = (strSecretKey.GetLength() + 1) * sizeof(TCHAR);
+	LPBYTE lpszSecretKey = (LPBYTE)(LPCTSTR)strSecretKey;  // raw byte pointer into the key string
+	DWORD dwSecretKey = (strSecretKey.GetLength() + 1) * sizeof(TCHAR);  // key length in bytes, including null terminator
 	if (!m_strInputName.IsEmpty() && !m_strOutputName.IsEmpty())
 	{
+		// RC4 is symmetric: applying EncryptFile again with the same key reverses the encryption
 		if (EncryptFile(CALG_RC4, m_strOutputName, m_strInputName, lpszSecretKey, dwSecretKey))
 		{
 			MessageBox(_T("The file have been successfully decrypted!"), _T("Crypt Library Demo"), MB_OK);
