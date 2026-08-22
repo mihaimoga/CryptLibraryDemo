@@ -42,6 +42,7 @@
     <None Include="README.md" />
     <None Include="ReleaseNotes.html" />
     <None Include="SoftwareContentRegister.html" />
+    <None Include="AGENTS.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CryptLibraryDemo.h">

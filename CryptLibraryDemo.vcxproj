@@ -198,6 +198,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="AGENTS.md" />
     <None Include="hlp\CryptLibraryDemo.hhc" />
     <None Include="hlp\CryptLibraryDemo.hhk" />
     <CustomBuild Include="hlp\CryptLibraryDemo.hhp">
