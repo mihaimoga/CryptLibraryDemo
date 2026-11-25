@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>CryptLibraryDemo - Help</title>
+		<link rel="icon" type="image/png" href="https://www.moga.doctor/romania-flag-square-icon-256.png">
+		<link rel="apple-touch-icon" href="https://www.moga.doctor/romania-flag-square-icon-256.png">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<div class="container">
+				<a class="navbar-brand" href="https://www.moga.doctor/" target="_blank">CryptLibraryDemo</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link" href="https://github.com/mihaimoga/CryptLibraryDemo/graphs/contributors" target="_blank">Contributors</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://github.com/mihaimoga/CryptLibraryDemo/issues" target="_blank">Issues</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://github.com/mihaimoga/CryptLibraryDemo/discussions" target="_blank">Discussions</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://github.com/mihaimoga/CryptLibraryDemo/wiki" target="_blank">Wiki</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container">
+			<div class="row divide-md">
+				<div class="col-md-12 col-sm-12 divide-md text-justify" style="text-align: justify;">
+					<h1 class="text-center">CryptLibraryDemo</h1>
+					<p><strong>CryptLibraryDemo</strong> is a Windows desktop application, written in C++ with the Microsoft Foundation Class (MFC) library, that shows how to use the Microsoft <code>CryptoAPI</code> to compute checksums (hash codes) and to encrypt and decrypt data. Its reusable part is a small set of functions in <code>CryptographyExt.h</code> and <code>CryptographyExt.cpp</code> that you can copy into your own MFC project; the dialog only demonstrates them. The project is described in the <a href="https://www.codeproject.com/articles/Crypt-Library-Demo-The-Basics-of-Microsoft-CryptoA" target="_blank">Crypt Library Demo</a> article on CodeProject.</p>
+					<p class="text-center"><img class="img-thumbnail" src="CryptLibraryDemo.png" alt="CryptLibraryDemo main window"></p>
+
+					<h2>Background</h2>
+					<p>In simple terms, cryptography is the application of selected processes for encoding data so that the information can be stored and transmitted securely. The Microsoft <code>CryptoAPI</code> allows developers to build cryptographic security into their applications by providing a flexible set of functions to encrypt or digitally sign data. You can use cryptography to achieve many security requirements, including:</p>
+					<ul>
+						<li>Ensuring secrecy by coding sensitive files so that an interloper cannot understand them;</li>
+						<li>Guaranteeing secure communications even though the transmission media is not secure;</li>
+						<li>Verifying the origin of messages and data using digital signatures.</li>
+					</ul>
+					<p>The fundamental cryptographic operations supported by the <code>CryptoAPI</code> are encryption, decryption, and signing. Encryption is somewhat like controlled fragmentation: the data is there, but it's scattered according to the encryption rules. Decryption is simply the inverse of encryption, where the encryption rules are reversed to reassemble the data. Digital signing is analogous to physically hand-signing a document, but with one significant improvement: it is very, very difficult to forge a digital signature. <a href="https://learn.microsoft.com/en-us/windows/win32/seccrypto/cryptography-portal?redirectedfrom=MSDN" target="_blank">Here</a> you can find more about this subject.</p>
+					<p>This project covers checksums, encryption and decryption; it does not implement digital signatures. The <code>CryptoAPI</code> is maintained by Microsoft for backward compatibility only: for new development, Microsoft recommends <a href="https://learn.microsoft.com/en-us/windows/win32/seccng/cng-portal" target="_blank">Cryptography API: Next Generation (CNG)</a>.</p>
+
+					<h2>Features</h2>
+					<ul>
+						<li>Checksums (hash codes) of a binary buffer, of a <code>CString</code> or of a file, computed with MD2, MD4, MD5 or SHA-1; the result is raw bytes for a buffer and uppercase hexadecimal text for a string or a file.</li>
+						<li>Encryption and decryption of a binary buffer or of a whole file with a secret key, using RC2, RC4, DES or Triple DES; the demo uses RC4.</li>
+						<li>Conversion between binary data and hexadecimal text, also for <code>CLongBinary</code> objects.</li>
+						<li><code>GetComputerID()</code>, a helper that returns the user name and the computer name as <code>UserName:ComputerName</code>; the demo uses it as the secret key.</li>
+						<li><code>TraceLastError()</code>, which writes the reason of a failed <code>CryptoAPI</code> call to the debug output.</li>
+						<li>A dialog that computes the MD5 checksum of a file and encrypts or decrypts a file with RC4.</li>
+					</ul>
+
+					<h2>The Library</h2>
+					<p>The main implementation is done in <em>CryptographyExt.h</em> and <em>CryptographyExt.cpp</em> files, as follows:</p>
+					<ul>
+						<li><code>bool GetChecksumBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD&amp; dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength);</code> computes the hash code of the given binary buffer, using the specified algorithm; <code>dwOutputLength</code> is the size of the output buffer on input and the size of the hash on output;</li>
+						<li><code>bool GetChecksumString(ALG_ID nAlgorithm, CString&amp; strResult, CString strBuffer);</code> computes the hash code of the given <code>CString</code>, using the specified algorithm, and returns it as hexadecimal text;</li>
+						<li><code>bool GetChecksumFile(ALG_ID nAlgorithm, CString&amp; strResult, CString strPathName);</code> computes the hash code of the given file, using the specified algorithm, and returns it as hexadecimal text;</li>
+						<li><code>bool EncryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD&amp; dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength, LPBYTE lpszSecretKey, DWORD dwSecretKey);</code> encrypts the given binary buffer, using the specified algorithm; <code>dwOutputLength</code> is the size of the output buffer on input and the size of the ciphertext on output;</li>
+						<li><code>bool EncryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName, LPBYTE lpszSecretKey, DWORD dwSecretKey);</code> encrypts the given file, using the specified algorithm;</li>
+						<li><code>bool DecryptBuffer(ALG_ID nAlgorithm, LPBYTE lpszOutputBuffer, DWORD&amp; dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength, LPBYTE lpszSecretKey, DWORD dwSecretKey);</code> decrypts the given binary buffer, using the specified algorithm; <code>dwOutputLength</code> returns the size of the plaintext;</li>
+						<li><code>bool DecryptFile(ALG_ID nAlgorithm, CString strOutputName, CString strInputName, LPBYTE lpszSecretKey, DWORD dwSecretKey);</code> decrypts the given file, using the specified algorithm;</li>
+						<li>Helper function for secret key: <code>CString GetComputerID();</code> returns the user name and the computer name as <code>UserName:ComputerName</code>;</li>
+						<li><code>bool ConvertBinaryToHexa(LPTSTR lpszOutputBuffer, DWORD dwOutputLength, LPBYTE lpszInputBuffer, DWORD dwInputLength);</code> converts binary data to uppercase hexadecimal text; the overload <code>bool ConvertBinaryToHexa(CLongBinary* pTargetBinary, CLongBinary* pSourceBinary);</code> does the same for <code>CLongBinary</code> objects, allocating the data block of the target with <code>GlobalAlloc</code>;</li>
+						<li><code>bool ConvertHexaToBinary(LPBYTE lpszOutputBuffer, DWORD dwOutputLength, LPCTSTR lpszInputBuffer, DWORD dwInputLength);</code> converts hexadecimal text back to binary data; the overload <code>bool ConvertHexaToBinary(CLongBinary* pTargetBinary, CLongBinary* pSourceBinary);</code> does the same for <code>CLongBinary</code> objects, allocating the data block of the target with <code>GlobalAlloc</code>;</li>
+						<li><code>void TraceLastError(LPCTSTR lpszLibrary, LPCTSTR lpszOperation, DWORD dwLastError);</code> writes the name of a failed operation and the system message for its error code to the debug output.</li>
+					</ul>
+					<p>Every function that returns <code>bool</code> returns <code>false</code> on failure. The header also defines <code>CRYPT_LIBRARY_NAME</code> (the library name that appears in the error traces), <code>MD5CHECKSUM_LENGTH</code> and <code>SHA1CHECKSUM_LENGTH</code> (the sizes in bytes of an MD5 and of a SHA-1 hash: 16 and 20), <code>MAX_CRYPT_TAIL</code> (4096, the room that the file functions add to the output buffer for padding) and <code>MAX_STR_BUFFER</code> (4096, the size of the buffer that receives the message of a <code>CFileException</code>).</p>
+
+					<h3>Usage</h3>
+					<p>Add <em>CryptographyExt.h</em> and <em>CryptographyExt.cpp</em> to an MFC project that has a precompiled header named <code>stdafx.h</code>: the <code>.cpp</code> file includes it first, and it links <code>secur32</code>, <code>netapi32</code>, <code>crypt32</code> and <code>advapi32</code> by itself. The functions can then be used as follows (to keep the example short, it does not check the results):</p>
+<pre style="tab-size: 4;"><code>#include "CryptographyExt.h"
+
+// Checksum of a file: strChecksum receives 32 uppercase hexadecimal digits
+CString strChecksum;
+GetChecksumFile(CALG_MD5, strChecksum, _T("report.pdf"));
+
+// The secret key is any block of bytes; here, the characters of a CString
+const CString strSecret = _T("my secret");
+LPBYTE lpszSecretKey = (LPBYTE)(LPCTSTR)strSecret;
+const DWORD dwSecretKey = (strSecret.GetLength() + 1) * sizeof(TCHAR);
+
+// Files: the output file is created, or overwritten if it already exists
+EncryptFile(CALG_RC4, _T("report.enc"), _T("report.pdf"), lpszSecretKey, dwSecretKey);
+DecryptFile(CALG_RC4, _T("report.out"), _T("report.enc"), lpszSecretKey, dwSecretKey);
+
+// Buffers: leave room for the padding that block ciphers add
+BYTE lpszPlain[] = "Hello, CryptoAPI!";
+BYTE lpszCipher[sizeof(lpszPlain) + MAX_CRYPT_TAIL];
+DWORD dwCipher = sizeof(lpszCipher); // in: size of the buffer; out: size of the ciphertext
+if (EncryptBuffer(CALG_RC2, lpszCipher, dwCipher, lpszPlain, sizeof(lpszPlain), lpszSecretKey, dwSecretKey))
+{
+	BYTE lpszRestored[sizeof(lpszCipher)];
+	DWORD dwRestored = sizeof(lpszRestored); // out: size of the plaintext
+	DecryptBuffer(CALG_RC2, lpszRestored, dwRestored, lpszCipher, dwCipher, lpszSecretKey, dwSecretKey);
+}</code></pre>
+
+					<h2>How It Works</h2>
+					<ul>
+						<li><strong>Provider</strong>: every function acquires the default <code>PROV_RSA_FULL</code> cryptographic provider with the <code>CRYPT_VERIFYCONTEXT</code> flag, so no persistent key container is used, and releases it before returning.</li>
+						<li><strong>Hashing</strong>: <code>GetChecksumBuffer</code> creates a hash object for the requested algorithm, feeds it the data with <code>CryptHashData</code> and reads the result with <code>CryptGetHashParam</code>. <code>GetChecksumString</code> and <code>GetChecksumFile</code> call it and convert the hash to uppercase hexadecimal text; their hash buffer has 16 bytes for <code>CALG_MD5</code> and 20 bytes for any other algorithm.</li>
+						<li><strong>Key derivation</strong>: <code>EncryptBuffer</code> and <code>DecryptBuffer</code> hash the secret key with MD5 and give the hash to <code>CryptDeriveKey</code>, which creates the session key for the requested algorithm. The same secret always produces the same key.</li>
+						<li><strong>Encryption and decryption</strong>: the input is first copied to the output buffer, which <code>CryptEncrypt</code> or <code>CryptDecrypt</code> then transforms in place, so the output buffer must be at least as large as the input. Block ciphers (RC2, DES and Triple DES) pad the data to a multiple of the block size, so the ciphertext can be larger than the plaintext; the file functions reserve <code>MAX_CRYPT_TAIL</code> extra bytes for that. RC4 is a stream cipher: its ciphertext is as large as the plaintext, and applying it twice with the same key restores the data.</li>
+						<li><strong>Files</strong>: <code>GetChecksumFile</code>, <code>EncryptFile</code> and <code>DecryptFile</code> read the whole input file into memory. <code>EncryptFile</code> and <code>DecryptFile</code> then create the output file, or overwrite it if it already exists.</li>
+						<li><strong>Errors</strong>: when a <code>CryptoAPI</code> call fails, <code>TraceLastError</code> writes <code>[Crypt] &lt;operation&gt;: &lt;message&gt;</code> to the debug output (for example, to the <strong>Output</strong> window of Visual Studio) and the function returns <code>false</code>. A file exception is also written to the debug output.</li>
+					</ul>
+
+					<h2>Limitations</h2>
+					<p>This is a demonstration project, and it has these limits:</p>
+					<ul>
+						<li><strong>Algorithms</strong>: the <code>PROV_RSA_FULL</code> provider offers the MD2, MD4, MD5 and SHA-1 hashes and the RC2, RC4, DES and Triple DES ciphers. SHA-2 hashes and AES ciphers are not available: the functions return <code>false</code> (for example, <code>CryptCreateHash</code> fails with <code>NTE_BAD_ALGID</code> for SHA-256). Supporting them would require changes in the library, such as the <code>PROV_RSA_AES</code> provider and larger hash buffers.</li>
+						<li><strong>Strength</strong>: all the available algorithms are obsolete or deprecated by today's standards. The session key comes from a single unsalted MD5 hash of the secret, and the encrypted data has no integrity check: decrypting with a wrong RC4 key still succeeds and produces garbage. Use <a href="https://learn.microsoft.com/en-us/windows/win32/seccng/cng-portal" target="_blank">CNG</a> for new work.</li>
+						<li><strong>String checksums</strong>: <code>GetChecksumString</code> hashes the UTF-16 characters of the string, including the terminating null character, so it does not return the usual checksum of the text: for <code>abc</code> the MD5 is <code>0325B2BC5BC6ECFBAC751818498ECE3F</code>, not <code>900150983CD24FB0D6963F7D28E17F72</code>. To checksum text in another encoding, convert it and call <code>GetChecksumBuffer</code> with the converted bytes.</li>
+						<li><strong>Files</strong>: they are read completely into memory, so they must fit in memory and be smaller than 4 GB. An empty or missing input file makes the function return <code>false</code>.</li>
+						<li><strong>Hexadecimal helpers</strong>: <code>ConvertBinaryToHexa</code> writes a terminating null character, so its output buffer needs <code>2 * n + 1</code> characters for <code>n</code> bytes; <code>ConvertHexaToBinary</code> accepts only uppercase digits (<code>0</code>-<code>9</code> and <code>A</code>-<code>F</code>).</li>
+						<li><strong>Demo key</strong>: the dialog uses <code>GetComputerID()</code> as the secret, so a file can be decrypted only under the same user name and computer name. The names are not secret: this ties a file to a user and a computer, but does not protect it from anyone who knows them. In Debug builds, <code>GetComputerID()</code> also writes both names to the debug output.</li>
+						<li><strong>Demo decryption</strong>: both <strong>Encrypt</strong> and <strong>Decrypt</strong> call <code>EncryptFile</code> with <code>CALG_RC4</code>, which works only because RC4 is symmetric. To decrypt a file encrypted with a block cipher, call <code>DecryptFile</code>.</li>
+						<li><strong>Demo messages</strong>: the dialog reports only successes; a failure appears in the debug output only.</li>
+					</ul>
+
+					<h2>Getting Started</h2>
+
+					<h3>Prerequisites</h3>
+					<ul>
+						<li>Windows and Visual Studio 2026 (the project uses the MSVC v145 toolset).</li>
+						<li>The <strong>Desktop development with C++</strong> workload, including the C++ MFC component for the latest MSVC build tools (x86 and x64): the project links MFC statically.</li>
+						<li>A Windows 10 or Windows 11 SDK.</li>
+						<li><a href="https://learn.microsoft.com/en-us/previous-versions/windows/desktop/htmlhelp/microsoft-html-help-downloads" target="_blank">HTML Help Workshop</a> (<code>hhc.exe</code>), which the build uses to compile the help file <code>hlp\CryptLibraryDemo.hhp</code>.</li>
+					</ul>
+
+					<h3>Building the Project</h3>
+					<ol>
+						<li>Clone the repository:
+<pre style="tab-size: 4;"><code>git clone https://github.com/mihaimoga/CryptLibraryDemo.git</code></pre>
+						</li>
+						<li>Open <code>CryptLibraryDemo.sln</code> in Visual Studio.</li>
+						<li>Select the <strong>Debug</strong> or <strong>Release</strong> configuration and the <strong>x64</strong> or <strong>Win32</strong> platform, then choose <strong>Build &gt; Build Solution</strong>. To build from a Developer PowerShell for Visual Studio instead, run:
+<pre style="tab-size: 4;"><code>msbuild CryptLibraryDemo.vcxproj /p:Configuration=Release /p:Platform=x64</code></pre>
+						</li>
+					</ol>
+					<p>The executable and the help file <code>CryptLibraryDemo.chm</code> are written to <code>x64\Release</code> for the x64 platform and to <code>Release</code> for Win32; the Debug configuration uses <code>x64\Debug</code> and <code>Debug</code>. The build also regenerates <code>hlp\HTMLDefines.h</code> from <code>resource.h</code>.</p>
+
+					<h3>Running</h3>
+					<ol>
+						<li>Start <code>CryptLibraryDemo.exe</code> from the output folder, next to <code>CryptLibraryDemo.chm</code>.</li>
+						<li>In the <strong>MD5 Checksum</strong> group, click <strong>Select</strong> to choose a file, then click <strong>Compute</strong>: the MD5 checksum of the file appears in the checksum box and a message confirms it.</li>
+						<li>In the <strong>RC4 Encrypt/Decrypt</strong> group, click the first <strong>Select</strong> to choose the input file and the second <strong>Select</strong> to choose the output file, then click <strong>Encrypt</strong> or <strong>Decrypt</strong>. A message appears when the operation succeeds. If the output file already exists, it is overwritten without confirmation.</li>
+						<li>Open the system menu (click the icon at the left end of the title bar, or press Alt+Space) to see the <strong>About ...</strong> box and the links to the author's social profiles and to the Issues, Discussions and Wiki pages of this project.</li>
+					</ol>
+					<p>There is no automated test suite, so validate changes by running the application.</p>
+
+					<h3>API Documentation</h3>
+					<p>The public functions are documented with Doxygen comments. To generate the HTML documentation, install <a href="https://www.doxygen.nl/" target="_blank">Doxygen</a> and run <code>!doxygen.bat</code> from the repository folder: it deletes the previous contents of the <code>html</code> folder and runs <code>doxygen doxyfile.txt</code>.</p>
+
+					<h2>File Structure</h2>
+					<ul>
+						<li><code>CryptographyExt.h</code>, <code>CryptographyExt.cpp</code>: the reusable cryptographic functions (checksums, encryption, decryption, conversions and error tracing);</li>
+						<li><code>CryptLibraryDemo.h</code>, <code>CryptLibraryDemo.cpp</code>: the MFC application class <code>CCryptLibraryDemoApp</code>;</li>
+						<li><code>CryptLibraryDemoDlg.h</code>, <code>CryptLibraryDemoDlg.cpp</code>: the main dialog <code>CCryptLibraryDemoDlg</code> and the About box;</li>
+						<li><code>HLinkCtrl.h</code>, <code>HLinkCtrl.cpp</code>: the <code>CHLinkCtrl</code> hyperlink control by PJ Naughter, used by the About box;</li>
+						<li><code>VersionInfo.h</code>, <code>VersionInfo.cpp</code>: the <code>CVersionInfo</code> class by PJ Naughter, used by the About box to read the version of the application;</li>
+						<li><code>resource.h</code>, <code>CryptLibraryDemo.rc</code>, <code>res/</code>: the resource identifiers, the resource script and the resource files (the icon and the <code>.rc2</code> file);</li>
+						<li><code>stdafx.h</code>, <code>stdafx.cpp</code>, <code>targetver.h</code>: the precompiled header and the target Windows version;</li>
+						<li><code>hlp/</code>: the HTML Help project that is compiled into <code>CryptLibraryDemo.chm</code>; <code>HTMLDefines.h</code> is generated by the build, so do not edit it by hand;</li>
+						<li><code>CryptLibraryDemo.sln</code>, <code>CryptLibraryDemo.vcxproj</code>, <code>CryptLibraryDemo.vcxproj.filters</code>: the Visual Studio solution and project;</li>
+						<li><code>doxyfile.txt</code>, <code>!doxygen.bat</code>: the Doxygen configuration and the script that regenerates the API documentation;</li>
+						<li><code>CryptLibraryDemo.png</code>: the screenshot shown above;</li>
+						<li><code>CryptLibraryDemo.html</code>: the same content as <code>README.md</code>, as a standalone HTML help page;</li>
+						<li><code>ReleaseNotes.html</code>, <code>SoftwareContentRegister.html</code>: the release notes and the register of the third-party components;</li>
+						<li><code>AGENTS.md</code>: the repository conventions for contributors and coding agents.</li>
+					</ul>
+
+					<h2>Roadmap</h2>
+					<p>The work below is still open. It follows from the limits listed under Limitations, and no release dates are set.</p>
+					<ul>
+						<li><strong>Offer every algorithm in the dialog.</strong> The dialog uses only MD5 and RC4, although the library also offers the MD2, MD4 and SHA-1 hashes and the RC2, DES and Triple DES ciphers. Two lists of algorithms, one for the checksum and one for the encryption, would show them all. First, <code>OnBnClickedDecrypt</code> has to call <code>DecryptFile</code>: it calls <code>EncryptFile</code> with <code>CALG_RC4</code> now, which works only because RC4 is symmetric.</li>
+						<li><strong>Report failures in the dialog.</strong> The handlers of the <strong>Compute</strong>, <strong>Encrypt</strong> and <strong>Decrypt</strong> buttons show a message only when the call succeeds, and the library functions return just <code>bool</code>, so the dialog cannot tell why a call failed: a CryptoAPI error or a file error goes to the debug output, and an empty input file is not reported at all. If the functions also returned the reason, for instance in an extra parameter, the dialog could say what went wrong: the input file is empty, another program has a file open, or the output file cannot be written.</li>
+						<li><strong>Ask for a password.</strong> The secret of the dialog is <code>GetComputerID()</code>, the user name and the computer name: a file can be opened only under the same names, and anyone who knows them can open it. A password box would let the user choose the secret. The <code>TRACE</code> calls in <code>GetComputerID()</code> that write both names to the debug output in Debug builds can be removed at once, because <code>AGENTS.md</code> asks not to log keys.</li>
+						<li><strong>Add automated tests.</strong> There is no test project yet, but the functions in <code>CryptographyExt.cpp</code> do not need the dialog, so they can be tested on their own. Good first cases are known-answer vectors for <code>GetChecksumBuffer</code> (the MD5 of <code>abc</code> is <code>900150983CD24FB0D6963F7D28E17F72</code>), a round trip with every cipher for inputs shorter than, equal to and longer than a cipher block, decryption with a wrong key, an empty or missing file, and the hexadecimal converters. A GitHub Actions workflow could then build the solution and run the tests for every pull request; the <code>.github</code> folder has no workflow yet.</li>
+						<li><strong>Support SHA-2 and AES.</strong> The functions acquire the <code>PROV_RSA_FULL</code> provider, which has neither. The <code>PROV_RSA_AES</code> provider offers the SHA-256, SHA-384 and SHA-512 hashes and the AES-128, AES-192 and AES-256 ciphers, and it produces the same ciphertext as the present provider for RC2, RC4, DES and Triple DES, so the files that the present version wrote stay readable. The hash buffer of <code>GetChecksumString</code> and <code>GetChecksumFile</code> (16 bytes for MD5, 20 bytes for any other algorithm) would have to follow the size of the hash, because SHA-2 needs 32, 48 or 64 bytes.</li>
+						<li><strong>Process large files in blocks.</strong> <code>GetChecksumFile</code>, <code>EncryptFile</code> and <code>DecryptFile</code> read the whole file into memory (the last two also allocate a second buffer of the same size plus <code>MAX_CRYPT_TAIL</code> bytes) and cast its length to <code>UINT</code>, so a file must fit in memory and be smaller than 4 GB. Both limits would go away if the data were processed in blocks: <code>CryptHashData</code> can be called once per block, and <code>CryptEncrypt</code> and <code>CryptDecrypt</code> take a <code>Final</code> flag for the last block. With blocks that are a multiple of the cipher block size, the hash and the ciphertext are the same as with a single call, so existing files are not affected.</li>
+						<li><strong>Protect the encrypted data better.</strong> The key comes from a single unsalted MD5 hash of the secret and no IV is set, so the same secret always gives the same key: RC4 encrypts every file with the same keystream, and the block ciphers give the same ciphertext for the same data. Nothing checks that the data is intact either, so decrypting with a wrong RC4 key just produces garbage. A random salt and IV for each file, a slow key derivation function and an integrity check (a MAC, or an authenticated mode), stored in a small header with a version number so that older files can still be read, would remove these weaknesses. CNG provides <code>BCryptDeriveKeyPBKDF2</code> and AES in GCM mode for this.</li>
+					</ul>
+					<p>Every item on this roadmap is open to discussion and to contributions. Open an <a href="https://github.com/mihaimoga/CryptLibraryDemo/issues" target="_blank">issue</a> that names the item before you start working on it, so that the administrators and the community can talk it over with you; an issue for an enhancement has to be approved by an administrator, and an approved issue gets the <code>Accepted</code> label. Ideas that are not on the list are welcome in the <a href="https://github.com/mihaimoga/CryptLibraryDemo/discussions" target="_blank">Discussions</a>.</p>
+
+					<h2>Contributing</h2>
+					<p>Bug reports and pull requests are welcome; please read <a href="https://github.com/mihaimoga/CryptLibraryDemo/blob/main/CONTRIBUTING.md" target="_blank">CONTRIBUTING.md</a> first, because most pull requests need an approved issue. This project follows the <a href="https://github.com/mihaimoga/CryptLibraryDemo/blob/main/CODE_OF_CONDUCT.md" target="_blank">Code of Conduct</a>. Please report security vulnerabilities privately, as described in <a href="https://github.com/mihaimoga/CryptLibraryDemo/blob/main/SECURITY.md" target="_blank">SECURITY.md</a>. The repository conventions (formatting, build and validation) are summarized in <a href="https://github.com/mihaimoga/CryptLibraryDemo/blob/main/AGENTS.md" target="_blank">AGENTS.md</a>.</p>
+
+					<h2>License</h2>
+					<p>CryptLibraryDemo is licensed under the GNU General Public License, version 3 or (at your option) any later version - see the <a href="https://github.com/mihaimoga/CryptLibraryDemo/blob/main/LICENSE" target="_blank">LICENSE</a> file for details. The third-party components used by the project have their own licenses, listed in <a href="SoftwareContentRegister.html" target="_blank">SoftwareContentRegister.html</a>.</p>
+					<p>Created by <a href="https://www.moga.doctor/" target="_blank">Stefan-Mihai MOGA</a>.</p>
+				</div>
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+	</body>
+</html>

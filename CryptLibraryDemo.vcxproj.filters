@@ -23,7 +23,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
     <None Include="res\CryptLibraryDemo.rc2">
       <Filter>Resource Files</Filter>
     </None>
@@ -43,6 +42,7 @@
     <None Include="ReleaseNotes.html" />
     <None Include="SoftwareContentRegister.html" />
     <None Include="AGENTS.md" />
+    <None Include="CryptLibraryDemo.html" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CryptLibraryDemo.h">
@@ -99,5 +99,8 @@
     <CustomBuild Include="Resource.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="CryptLibraryDemo.png" />
   </ItemGroup>
 </Project>

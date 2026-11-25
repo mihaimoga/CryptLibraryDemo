@@ -52,6 +52,6 @@ When using or modifying this software:
 
 ## Scope
 
-This policy applies to the source code and build artifacts contained in the BTreeAccess repository.
+This policy applies to the source code and build artifacts contained in the CryptLibraryDemo repository.
 
-Thank you for helping improve the security of BTreeAccess.
+Thank you for helping improve the security of CryptLibraryDemo.
