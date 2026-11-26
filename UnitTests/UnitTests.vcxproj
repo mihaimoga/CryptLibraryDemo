@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+	<ProjectConfiguration Include="Debug|Win32">
+	  <Configuration>Debug</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Debug|x64">
+	  <Configuration>Debug</Configuration>
+	  <Platform>x64</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|Win32">
+	  <Configuration>Release</Configuration>
+	  <Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="Release|x64">
+	  <Configuration>Release</Configuration>
+	  <Platform>x64</Platform>
+	</ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+	<ProjectGuid>{71276D57-70DB-4BA9-96DC-9DF4B458F26D}</ProjectGuid>
+	<RootNamespace>UnitTests</RootNamespace>
+	<Keyword>Win32Proj</Keyword>
+	<ProjectSubType>NativeUnitTestProject</ProjectSubType>
+	<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseDebugLibraries>true</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<UseOfMfc>Static</UseOfMfc>
+	<PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseDebugLibraries>true</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<UseOfMfc>Static</UseOfMfc>
+	<PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<UseOfMfc>Static</UseOfMfc>
+	<PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+	<ConfigurationType>DynamicLibrary</ConfigurationType>
+	<UseDebugLibraries>false</UseDebugLibraries>
+	<CharacterSet>Unicode</CharacterSet>
+	<UseOfMfc>Static</UseOfMfc>
+	<PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+	<OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+	<IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+	<LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+	<LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+	<ResourceCompile>
+	  <Culture>0x0409</Culture>
+	  <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	</ResourceCompile>
+	<ClCompile>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+	  <WarningLevel>Level4</WarningLevel>
+	  <Optimization>Disabled</Optimization>
+	  <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+	  <PreprocessorDefinitions>WIN32;_WINDOWS;_USRDLL;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <AdditionalIncludeDirectories>$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(ProjectDir)..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <LanguageStandard>stdcpplatest</LanguageStandard>
+	</ClCompile>
+	<Link>
+	  <SubSystem>Windows</SubSystem>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <AdditionalLibraryDirectories>$(VCInstallDir)Auxiliary\VS\UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	</Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	<ResourceCompile>
+	  <Culture>0x0409</Culture>
+	  <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	</ResourceCompile>
+	<ClCompile>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+	  <WarningLevel>Level4</WarningLevel>
+	  <Optimization>Disabled</Optimization>
+	  <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+	  <PreprocessorDefinitions>_WINDOWS;_USRDLL;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <AdditionalIncludeDirectories>$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(ProjectDir)..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <LanguageStandard>stdcpplatest</LanguageStandard>
+	</ClCompile>
+	<Link>
+	  <SubSystem>Windows</SubSystem>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <AdditionalLibraryDirectories>$(VCInstallDir)Auxiliary\VS\UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	</Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+	<ResourceCompile>
+	  <Culture>0x0409</Culture>
+	  <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	</ResourceCompile>
+	<ClCompile>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+	  <!-- Level3 like the main project's Release configurations; at Level4 the production code's ASSERT-only parameters warn (C4100). -->
+	  <WarningLevel>Level3</WarningLevel>
+	  <Optimization>MaxSpeed</Optimization>
+	  <FunctionLevelLinking>true</FunctionLevelLinking>
+	  <IntrinsicFunctions>true</IntrinsicFunctions>
+	  <PreprocessorDefinitions>WIN32;_WINDOWS;_USRDLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <AdditionalIncludeDirectories>$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(ProjectDir)..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <LanguageStandard>stdcpplatest</LanguageStandard>
+	</ClCompile>
+	<Link>
+	  <SubSystem>Windows</SubSystem>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <EnableCOMDATFolding>true</EnableCOMDATFolding>
+	  <OptimizeReferences>true</OptimizeReferences>
+	  <AdditionalLibraryDirectories>$(VCInstallDir)Auxiliary\VS\UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	</Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+	<ResourceCompile>
+	  <Culture>0x0409</Culture>
+	  <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	</ResourceCompile>
+	<ClCompile>
+	  <PrecompiledHeader>Use</PrecompiledHeader>
+	  <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+	  <!-- Level3 like the main project's Release configurations; at Level4 the production code's ASSERT-only parameters warn (C4100). -->
+	  <WarningLevel>Level3</WarningLevel>
+	  <Optimization>MaxSpeed</Optimization>
+	  <FunctionLevelLinking>true</FunctionLevelLinking>
+	  <IntrinsicFunctions>true</IntrinsicFunctions>
+	  <PreprocessorDefinitions>_WINDOWS;_USRDLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <AdditionalIncludeDirectories>$(VCInstallDir)Auxiliary\VS\UnitTest\include;$(ProjectDir)..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	  <LanguageStandard>stdcpplatest</LanguageStandard>
+	</ClCompile>
+	<Link>
+	  <SubSystem>Windows</SubSystem>
+	  <GenerateDebugInformation>true</GenerateDebugInformation>
+	  <EnableCOMDATFolding>true</EnableCOMDATFolding>
+	  <OptimizeReferences>true</OptimizeReferences>
+	  <AdditionalLibraryDirectories>$(VCInstallDir)Auxiliary\VS\UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+	</Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+	<ClInclude Include="..\CryptographyExt.h" />
+	<ClInclude Include="..\stdafx.h" />
+	<ClInclude Include="..\targetver.h" />
+	<ClInclude Include="CipherTestData.h" />
+	<ClInclude Include="TestHelpers.h" />
+  </ItemGroup>
+  <ItemGroup>
+	<ClCompile Include="..\CryptographyExt.cpp" />
+	<ClCompile Include="..\stdafx.cpp">
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+	  <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+	</ClCompile>
+	<ClCompile Include="ChecksumBufferTests.cpp" />
+	<ClCompile Include="ChecksumFileTests.cpp" />
+	<ClCompile Include="ChecksumStringTests.cpp" />
+	<ClCompile Include="EncryptionBufferTests.cpp" />
+	<ClCompile Include="EncryptionFileTests.cpp" />
+	<ClCompile Include="HexConversionTests.cpp" />
+	<ClCompile Include="SystemInfoTests.cpp" />
+	<ClCompile Include="TestHelpers.cpp" />
+	<ClCompile Include="TestModule.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+	<ResourceCompile Include="UnitTests.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

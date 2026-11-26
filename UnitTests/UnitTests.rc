@@ -1,0 +1,29 @@
+/* Copyright (C) 2014-2026 Stefan-Mihai MOGA
+This file is part of CryptLibraryDemo application developed by Stefan-Mihai MOGA.
+
+CryptLibraryDemo is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Open
+Source Initiative, either version 3 of the License, or any later version.
+
+CryptLibraryDemo is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+CryptLibraryDemo. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*/
+
+// UnitTests.rc : resources of the CryptLibraryDemo unit tests.
+//
+// The code under test runs inside the test module, so the module has to carry the
+// same standard MFC string resources as the application. MFC needs them, for
+// example, to describe a CFileException.
+
+#include "afxres.h"
+
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#include "afxres.rc"      // Standard components

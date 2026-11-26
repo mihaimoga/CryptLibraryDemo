@@ -1,9 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.33529.398
+# Visual Studio Version 18
+VisualStudioVersion = 18.12.12412.261 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CryptLibraryDemo", "CryptLibraryDemo.vcxproj", "{139E13AB-E6DF-4F4A-B73D-25AEDED9D1AC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{71276D57-70DB-4BA9-96DC-9DF4B458F26D} = {71276D57-70DB-4BA9-96DC-9DF4B458F26D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTests", "UnitTests\UnitTests.vcxproj", "{71276D57-70DB-4BA9-96DC-9DF4B458F26D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,14 @@ Global
 		{139E13AB-E6DF-4F4A-B73D-25AEDED9D1AC}.Release|Win32.Build.0 = Release|Win32
 		{139E13AB-E6DF-4F4A-B73D-25AEDED9D1AC}.Release|x64.ActiveCfg = Release|x64
 		{139E13AB-E6DF-4F4A-B73D-25AEDED9D1AC}.Release|x64.Build.0 = Release|x64
+		{71276D57-70DB-4BA9-96DC-9DF4B458F26D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{71276D57-70DB-4BA9-96DC-9DF4B458F26D}.Debug|Win32.Build.0 = Debug|Win32
+		{71276D57-70DB-4BA9-96DC-9DF4B458F26D}.Debug|x64.ActiveCfg = Debug|x64
+		{71276D57-70DB-4BA9-96DC-9DF4B458F26D}.Debug|x64.Build.0 = Debug|x64
+		{71276D57-70DB-4BA9-96DC-9DF4B458F26D}.Release|Win32.ActiveCfg = Release|Win32
+		{71276D57-70DB-4BA9-96DC-9DF4B458F26D}.Release|Win32.Build.0 = Release|Win32
+		{71276D57-70DB-4BA9-96DC-9DF4B458F26D}.Release|x64.ActiveCfg = Release|x64
+		{71276D57-70DB-4BA9-96DC-9DF4B458F26D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
