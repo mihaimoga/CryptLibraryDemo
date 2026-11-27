@@ -24,7 +24,7 @@ This project covers checksums, encryption and decryption; it does not implement 
 - `GetComputerID()`, a helper that returns the user name and the computer name as `UserName:ComputerName`; the demo uses it as the secret key.
 - `TraceLastError()`, which writes the reason of a failed `CryptoAPI` call to the debug output.
 - A dialog that computes the MD5 checksum of a file and encrypts or decrypts a file with RC4.
-- Unit tests (the `UnitTests` project) for every function of `CryptographyExt.cpp`, checked against published test vectors and independent implementations.
+- Unit tests (the `UnitTests` project) for every function of `CryptographyExt.cpp`, checked against published test vectors and independent implementations; building the project runs them.
 
 ## The Library
 
@@ -122,7 +122,7 @@ This is a demonstration project, and it has these limits:
    msbuild CryptLibraryDemo.vcxproj /p:Configuration=Release /p:Platform=x64
    ```
 
-The executable and the help file `CryptLibraryDemo.chm` are written to `x64\Release` for the x64 platform and to `Release` for Win32; the Debug configuration uses `x64\Debug` and `Debug`. The build also regenerates `hlp\HTMLDefines.h` from `resource.h`. The solution also contains the `UnitTests` project, which **Build Solution** builds as well (see Running the Tests).
+The executable and the help file `CryptLibraryDemo.chm` are written to `x64\Release` for the x64 platform and to `Release` for Win32; the Debug configuration uses `x64\Debug` and `Debug`. The build also regenerates `hlp\HTMLDefines.h` from `resource.h`. The solution also contains the `UnitTests` project, which **Build Solution** builds before the application and whose tests it runs (see Running the Tests): a failing test stops the build before the application is built. The `msbuild` command above builds `CryptLibraryDemo.vcxproj` alone, so it does not run the tests.
 
 ### Running
 
@@ -137,15 +137,17 @@ The functions in `CryptographyExt.cpp` also have unit tests; see Running the Tes
 
 The `UnitTests` project, which is part of the solution, tests every function of `CryptographyExt.cpp` without the dialog: the checksums of buffers, strings and files, the encryption and decryption of buffers and files with every cipher, the hexadecimal converters, `GetComputerID` and `TraceLastError`. It uses the Microsoft Unit Testing Framework for C++, which comes with the **Desktop development with C++** workload, and it compiles `CryptographyExt.cpp` itself, so the application does not have to be built first.
 
-1. In Visual Studio, build the **UnitTests** project (right-click it in Solution Explorer and choose **Build**), then choose **Test > Run All Tests**. The results appear in **Test Explorer**.
-2. To run the tests from a Developer PowerShell for Visual Studio instead, build the test project alone and run it with `vstest.console.exe`:
+Building the project also runs the tests. A post-build event in `UnitTests.vcxproj` starts `vstest.console.exe`, from the Visual Studio installation that runs the build, on the new `UnitTests.dll`, in every configuration (Debug and Release, x64 and Win32). The build log lists every test and ends with the number of tests that passed and failed. If a test fails, the build fails.
+
+1. In Visual Studio, build the **UnitTests** project (right-click it in Solution Explorer and choose **Build**): the results appear in the **Output** window. To see them in **Test Explorer**, or to run the tests again, choose **Test > Run All Tests**.
+2. To build and run the tests from a Developer PowerShell for Visual Studio instead, build the test project alone:
 
    ```powershell
    msbuild UnitTests\UnitTests.vcxproj /p:Configuration=Debug /p:Platform=x64
-   vstest.console.exe UnitTests\x64\Debug\UnitTests.dll /Platform:x64
    ```
 
-   For Win32, build with `/p:Platform=Win32`, then run `UnitTests\Win32\Debug\UnitTests.dll` with `/Platform:x86`. The Release configuration works in the same way and writes to `UnitTests\x64\Release` and `UnitTests\Win32\Release`.
+   `msbuild` runs the tests on every build, even when nothing was recompiled. If a test fails, the failed test is listed above an `error MSB3073` and `msbuild` ends with exit code 1. For Win32, build with `/p:Platform=Win32`. The Release configuration works in the same way. The DLL is written to `UnitTests\x64\Debug`, `UnitTests\Win32\Debug`, `UnitTests\x64\Release` or `UnitTests\Win32\Release`.
+3. To run the tests again without building, run `vstest.console.exe` on the DLL, for example `vstest.console.exe UnitTests\x64\Debug\UnitTests.dll`. It takes the platform from the DLL, so a Win32 DLL needs no extra option.
 
 The expected values do not come from the code under test: they are published test vectors (RFC 1319, RFC 1320, RFC 1321 and FIPS 180) and the results of independent implementations (the Windows CNG API, a small software RC4 and the PyCryptodome library). The tests that read the debug output of the library skip themselves while a debugger is attached, and the tests that detect a failed `ASSERT` or `VERIFY` of the library work only in the Debug configuration.
 
@@ -164,7 +166,7 @@ The public functions are documented with Doxygen comments. To generate the HTML 
 - `stdafx.h`, `stdafx.cpp`, `targetver.h`: the precompiled header and the target Windows version;
 - `hlp/`: the HTML Help project that is compiled into `CryptLibraryDemo.chm`; `HTMLDefines.h` is generated by the build, so do not edit it by hand;
 - `CryptLibraryDemo.sln`, `CryptLibraryDemo.vcxproj`, `CryptLibraryDemo.vcxproj.filters`: the Visual Studio solution and project;
-- `UnitTests/`: the project `UnitTests.vcxproj` with the unit tests of `CryptographyExt.cpp` and their helpers;
+- `UnitTests/`: the project `UnitTests.vcxproj` with the unit tests of `CryptographyExt.cpp` and their helpers; a post-build event of the project runs the tests after every build;
 - `doxyfile.txt`, `!doxygen.bat`: the Doxygen configuration and the script that regenerates the API documentation;
 - `CryptLibraryDemo.png`: the screenshot shown above;
 - `CryptLibraryDemo.html`: the same content as `README.md`, as a standalone HTML help page;
@@ -178,7 +180,7 @@ The work below is still open. It follows from the limits listed under Limitation
 - **Offer every algorithm in the dialog.** The dialog uses only MD5 and RC4, although the library also offers the MD2, MD4 and SHA-1 hashes and the RC2, DES and Triple DES ciphers. Two lists of algorithms, one for the checksum and one for the encryption, would show them all. First, `OnBnClickedDecrypt` has to call `DecryptFile`: it calls `EncryptFile` with `CALG_RC4` now, which works only because RC4 is symmetric.
 - **Report failures in the dialog.** The handlers of the **Compute**, **Encrypt** and **Decrypt** buttons show a message only when the call succeeds, and the library functions return just `bool`, so the dialog cannot tell why a call failed: a CryptoAPI error or a file error goes to the debug output, and an empty input file is not reported at all. If the functions also returned the reason, for instance in an extra parameter, the dialog could say what went wrong: the input file is empty, another program has a file open, or the output file cannot be written.
 - **Ask for a password.** The secret of the dialog is `GetComputerID()`, the user name and the computer name: a file can be opened only under the same names, and anyone who knows them can open it. A password box would let the user choose the secret. The `TRACE` calls in `GetComputerID()` that write both names to the debug output in Debug builds can be removed at once, because `AGENTS.md` asks not to log keys.
-- **Run the tests on every pull request.** The `UnitTests` project tests the library, but nothing runs it for a pull request: the `.github` folder has no workflow yet. A GitHub Actions workflow could build `UnitTests\UnitTests.vcxproj` for the x64 and Win32 platforms and run the tests with `vstest.console.exe`, so that a change that breaks the library is found before it is merged.
+- **Run the tests on every pull request.** The `UnitTests` project runs its tests whenever it is built, but nothing builds it for a pull request: the `.github` folder has no workflow yet. A GitHub Actions workflow could build `UnitTests\UnitTests.vcxproj` for the x64 and Win32 platforms: the post-build event runs the tests and a failing test fails the build, so that a change that breaks the library is found before it is merged.
 - **Support SHA-2 and AES.** The functions acquire the `PROV_RSA_FULL` provider, which has neither. The `PROV_RSA_AES` provider offers the SHA-256, SHA-384 and SHA-512 hashes and the AES-128, AES-192 and AES-256 ciphers, and it produces the same ciphertext as the present provider for RC2, RC4, DES and Triple DES, so the files that the present version wrote stay readable. The hash buffer of `GetChecksumString` and `GetChecksumFile` (16 bytes for MD5, 20 bytes for any other algorithm) would have to follow the size of the hash, because SHA-2 needs 32, 48 or 64 bytes.
 - **Process large files in blocks.** `GetChecksumFile`, `EncryptFile` and `DecryptFile` read the whole file into memory (the last two also allocate a second buffer of the same size plus `MAX_CRYPT_TAIL` bytes) and cast its length to `UINT`, so a file must fit in memory and be smaller than 4 GB. Both limits would go away if the data were processed in blocks: `CryptHashData` can be called once per block, and `CryptEncrypt` and `CryptDecrypt` take a `Final` flag for the last block. With blocks that are a multiple of the cipher block size, the hash and the ciphertext are the same as with a single call, so existing files are not affected.
 - **Protect the encrypted data better.** The key comes from a single unsalted MD5 hash of the secret and no IV is set, so the same secret always gives the same key: RC4 encrypts every file with the same keystream, and the block ciphers give the same ciphertext for the same data. Nothing checks that the data is intact either, so decrypting with a wrong RC4 key just produces garbage. A random salt and IV for each file, a slow key derivation function and an integrity check (a MAC, or an authenticated mode), stored in a small header with a version number so that older files can still be read, would remove these weaknesses. CNG provides `BCryptDeriveKeyPBKDF2` and AES in GCM mode for this.
@@ -187,7 +189,7 @@ Every item on this roadmap is open to discussion and to contributions. Open an [
 
 ## Contributing
 
-Bug reports and pull requests are welcome; please read [CONTRIBUTING.md](CONTRIBUTING.md) first, because most pull requests need an approved issue. This project follows the [Code of Conduct](CODE_OF_CONDUCT.md). Please report security vulnerabilities privately, as described in [SECURITY.md](SECURITY.md). The repository conventions (formatting, build and validation) are summarized in [AGENTS.md](AGENTS.md). If a change touches `CryptographyExt.cpp`, run the unit tests in the Debug and Release configurations before you open a pull request (see Running the Tests).
+Bug reports and pull requests are welcome; please read [CONTRIBUTING.md](CONTRIBUTING.md) first, because most pull requests need an approved issue. This project follows the [Code of Conduct](CODE_OF_CONDUCT.md). Please report security vulnerabilities privately, as described in [SECURITY.md](SECURITY.md). The repository conventions (formatting, build and validation) are summarized in [AGENTS.md](AGENTS.md). If a change touches `CryptographyExt.cpp`, build the `UnitTests` project in the Debug and Release configurations before you open a pull request: the build runs the unit tests (see Running the Tests).
 
 ## License
 

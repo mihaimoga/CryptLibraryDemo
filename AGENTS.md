@@ -17,10 +17,12 @@ CryptLibraryDemo is a Windows desktop demonstration application built with MFC a
 ## Testing
 
 - `UnitTests/` is a native unit test project (`UnitTests.vcxproj`, Microsoft Unit Testing Framework for C++) in `CryptLibraryDemo.sln`. It compiles `CryptographyExt.cpp` directly, links MFC statically, and covers every function declared in `CryptographyExt.h`.
-- Build only the test project, then run it from Visual Studio Test Explorer or with `vstest.console.exe`, for example:
+- Build only the test project: a post-build event in `UnitTests.vcxproj` runs `vstest.console.exe` on the new `UnitTests.dll`, so the build itself runs all the tests, for example:
   - `msbuild UnitTests\UnitTests.vcxproj /p:Configuration=Debug /p:Platform=x64`
-  - `vstest.console.exe UnitTests\x64\Debug\UnitTests.dll /Platform:x64` (for Win32 use `UnitTests\Win32\Debug\UnitTests.dll` and `/Platform:x86`)
-- Do not build `CryptLibraryDemo.vcxproj` or the whole solution just to run the tests: its custom build step regenerates `hlp/HTMLDefines.h`.
+  - `msbuild UnitTests\UnitTests.vcxproj /p:Configuration=Release /p:Platform=Win32`
+- The event is defined for all four configurations and runs on every build, even when nothing was recompiled, so there is no need to run `vstest.console.exe` after `msbuild`. The log lists every test and ends with the `Total tests`, `Passed` and `Failed` counts. A failing test fails the build (`error MSB3073`, exit code 1) and is printed, with its message and source line, above that error. The event starts `$(VSInstallDir)Common7\IDE\Extensions\TestPlatform\vstest.console.exe`, so the Visual Studio installation that builds the project must include the Test Platform.
+- To run the tests again without building, or only some of them, run `vstest.console.exe` on the DLL, for example `vstest.console.exe UnitTests\x64\Debug\UnitTests.dll /TestCaseFilter:"Name=Md5_OfAbc_ReturnsRfc1321Digest"`. It takes the platform from the DLL, so the Win32 DLLs need no `/Platform` option.
+- Do not build `CryptLibraryDemo.vcxproj` or the whole solution just to run the tests: its custom build step regenerates `hlp/HTMLDefines.h`. `CryptLibraryDemo.sln` builds `UnitTests` before the application, so a solution build runs the tests too and a failing test stops it before the application is built; building `CryptLibraryDemo.vcxproj` alone does not run them.
 - After changing `CryptographyExt.*`, run the tests in `Debug` and `Release`, and add or update tests for the changed behavior. A failed MFC `ASSERT` or `VERIFY` in the code under test fails a test only in `Debug`; `Release` compiles them out.
 - Take expected values from an independent oracle (a published test vector, CNG, or another OS API), not from the code under test.
 - Never call `Assert` or the asserting helpers of `TestHelpers.h` on a worker thread: a failed `Assert` off the test thread terminates the test host and hides the other results. Use `RunConcurrently` and `WorkerFailures`, which report the problems on the test thread.

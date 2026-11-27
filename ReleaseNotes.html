@@ -72,6 +72,7 @@
 							<ul>
 								<li>Updated the project settings, the copyright information and the Bootstrap library;</li>
 								<li>Added the <code>UnitTests</code> project with unit tests for every function of <code>CryptographyExt.cpp</code>, written with the Microsoft Unit Testing Framework for C++;</li>
+								<li>Made every build of the <code>UnitTests</code> project run the tests: a post-build event starts <code>vstest.console.exe</code> on the new <code>UnitTests.dll</code> in the Debug and Release configurations of the Win32 and x64 platforms, so a failing test fails the build and <strong>Build Solution</strong> stops before it builds the application;</li>
 								<li>Documented the unit tests in <em>README.md</em>, <em>CryptLibraryDemo.html</em> and <em>AGENTS.md</em>.</li>
 							</ul>
 						</li>
